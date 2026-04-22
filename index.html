@@ -16,13 +16,12 @@
             height: 100%; 
             font-family: 'Special Elite', serif; 
             overflow: hidden; 
-            background-color: #111; /* 备用背景色 */
+            background-color: #111;
         }
 
         /* 背景图片设置 */
         .hero {
             height: 100vh;
-            /* 确保图片路径和后缀正确 */
             background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), 
                         url('images/background.png') no-repeat center center/cover;
             display: flex;
@@ -30,7 +29,7 @@
             padding-left: 10%;
         }
 
-        /* 顶部导航栏：平均分布 */
+        /* 顶部导航栏 */
         nav {
             position: fixed;
             top: 0;
@@ -44,7 +43,7 @@
         nav a {
             color: white;
             text-decoration: none;
-            font-size: 1.6rem; /* 打字机字体通常偏大，略微调整尺寸 */
+            font-size: 1.6rem;
             letter-spacing: 2px;
             transition: all 0.3s ease;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.6); 
@@ -52,38 +51,79 @@
         
         nav a:hover { 
             transform: scale(1.1); 
-            color: #ff9a44; /* 悬停时变为橙色，增加互动感 */
+            color: #ff9a44;
         }
 
-        /* 主标题样式：渐变橙色 + 动画 */
+        /* 主标题样式：渐变橙色 */
         .intro-text {
             font-size: 4.5rem;
             line-height: 1.2;
-            
-            /* 设置橙色渐变 */
             background: linear-gradient(to right, #ff7e5f, #feb47b, #ff9a44);
             -webkit-background-clip: text; 
             -webkit-text-fill-color: transparent; 
-            
             opacity: 0;
             transform: translateX(-30px);
             animation: fadeInUp 2s ease-out forwards;
             filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.3));
         }
 
-        /* 动画：从左侧划入并渐显 */
+        /* --- 新增：底部联系方式样式 --- */
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            padding: 30px 5%;
+            background: rgba(0, 0, 0, 0.4); /* 半透明深色背景 */
+            backdrop-filter: blur(5px); /* 毛玻璃效果 */
+            display: flex;
+            justify-content: space-around;
+            z-index: 1000;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeIn 3s ease-in; /* 稍微晚一点浮现 */
+        }
+
+        .contact-item {
+            text-align: left;
+            color: white;
+        }
+
+        .contact-label {
+            display: block;
+            font-size: 0.9rem;
+            color: #aaa; /* 标签使用灰色，参考你的图片 */
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .contact-value {
+            display: block;
+            font-size: 1.1rem;
+            color: white;
+            letter-spacing: 1px;
+            text-decoration: none;
+        }
+
+        /* 动画 */
         @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         /* 针对手机端的适配 */
         @media (max-width: 768px) {
             .intro-text { font-size: 2.8rem; }
             nav a { font-size: 1.1rem; }
-            .hero { padding-left: 5%; }
+            footer { 
+                flex-direction: column; 
+                gap: 20px; 
+                text-align: center;
+                padding: 20px;
+            }
+            .contact-item { text-align: center; }
         }
     </style>
 </head>
@@ -97,8 +137,23 @@
     </nav>
 
     <div class="hero">
-        <h1 class="intro-text">Hi, I am Xiaoqi Liu</h1>
+        <h1 class="intro-text">Hi, this is Xiaoqi Liu</h1>
     </div>
+
+    <footer>
+        <div class="contact-item">
+            <span class="contact-label">Email</span>
+            <a href="mailto:nataliexiaoqiliu617@gmail.com" class="contact-value">nataliexiaoqiliu617@gmail.com</a>
+        </div>
+        <div class="contact-item">
+            <span class="contact-label">Instagram</span>
+            <span class="contact-value">@orange_lx777</span>
+        </div>
+        <div class="contact-item">
+            <span class="contact-label">Rednote</span>
+            <span class="contact-value">@橙子快去画画</span>
+        </div>
+    </footer>
 
 </body>
 </html>
