@@ -22,7 +22,7 @@
             background-color: #fff; color: #333; overflow: hidden; 
         }
 
-        /* --- 导航栏 --- */
+        /* --- 导航栏 (全站统一) --- */
         nav {
             background: #111; padding: 20px 0; display: flex;
             justify-content: space-around; position: fixed;
@@ -37,29 +37,30 @@
         }
 
         .page-title {
-            font-size: 3rem; margin-top: 40px;
+            font-size: 2.8rem; margin-top: 40px; margin-bottom: 20px;
             background: linear-gradient(to right, #ff7e5f, #feb47b, #ff9a44);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             font-weight: bold; z-index: 10;
         }
 
         #drag-prompt {
-            font-size: 1.3rem; color: var(--orange-color);
+            font-size: 1.2rem; color: var(--orange-color);
             animation: pulse 1.5s infinite; z-index: 10; margin-bottom: 20px;
         }
 
-        /* --- 拼图底盘：虚线框 --- */
+        /* --- 拼图底盘：全面虚线底稿 --- */
         .puzzle-base {
             position: relative; width: 450px; height: 450px;
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* 绘制底部的虚线橘子和叶子 */
+        /* 核心修改：全面细分虚线底稿 */
         .base-outline {
             position: absolute; width: 100%; height: 100%;
             fill: none; stroke: #eee; stroke-width: 2;
-            stroke-dasharray: 8, 8; /* 虚线效果 */
+            stroke-dasharray: 8, 8; /* 虚线 */
             pointer-events: none;
+            z-index: 0;
         }
 
         /* 放置槽位 (Drop Zones) */
@@ -67,6 +68,14 @@
             position: absolute; width: 225px; height: 225px;
             z-index: 1;
         }
+        
+        /* 槽位坐标微调，确保虚线底稿与碎片精准重合 */
+        .z1 { top: 30px; left: 30px; }
+        .z2 { top: 30px; left: 195px; }
+        .z3 { top: 160px; left: 30px; }
+        .z4 { top: 160px; left: 195px; }
+        .z5 { top: 280px; left: 112px; } /* 底瓣 */
+        .z6 { top: -60px; left: 180px; } /* 叶子 */
 
         /* --- 拼图碎片 --- */
         .piece {
@@ -76,6 +85,7 @@
             transition: transform 0.2s;
         }
         .piece.dragging { opacity: 0.6; cursor: grabbing; scale: 1.1; }
+        /* 拼入后的状态：移除随机旋转，精准对齐 */
         .piece.snapped { position: absolute !important; transform: none !important; cursor: default; filter: none; }
 
         /* 碎片内的文字布局 */
@@ -83,14 +93,14 @@
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             width: 80%; color: white; text-align: center;
-            pointer-events: none; /* 防止文字干扰拖拽 */
+            pointer-events: none;
         }
         .piece-content h3 { font-size: 0.8rem; margin-bottom: 5px; opacity: 0.9; }
         .piece-content p { font-size: 0.95rem; line-height: 1.2; }
 
         /* 欢迎语 */
         #welcome-msg {
-            position: fixed; bottom: 60px; font-size: 2.8rem;
+            position: fixed; bottom: 80px; font-size: 2.5rem;
             color: var(--orange-color); opacity: 0;
             transition: 2.5s ease-in-out; letter-spacing: 3px;
         }
@@ -99,14 +109,6 @@
         @keyframes pulse {
             0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.7; }
         }
-
-        /* 槽位坐标微调 */
-        .z1 { top: 30px; left: 30px; }
-        .z2 { top: 30px; left: 195px; }
-        .z3 { top: 160px; left: 30px; }
-        .z4 { top: 160px; left: 195px; }
-        .z5 { top: 280px; left: 112px; } /* 底瓣 */
-        .z6 { top: -60px; left: 180px; } /* 叶子 */
     </style>
 </head>
 <body>
@@ -126,7 +128,9 @@
         <div class="puzzle-base">
             <svg class="base-outline" viewBox="0 0 450 450">
                 <circle cx="225" cy="225" r="180" />
-                <path d="M225,45 Q260,10 320,30 Q280,60 225,45" /> </svg>
+                
+                <line x1="225" y1="225" x2="225" y2="45" />    <line x1="225" y1="225" x2="405" y2="225" />   <line x1="225" y1="225" x2="135" y2="381" />   <line x1="225" y1="225" x2="315" y2="381" />   <line x1="225" y1="225" x2="45" y2="225" />    <path d="M225,45 Q260,10 320,30 Q280,60 225,45" />
+            </svg>
 
             <div class="drop-zone z1" data-target="p1"></div>
             <div class="drop-zone z2" data-target="p2"></div>
@@ -171,11 +175,11 @@
         const prompt = document.getElementById('drag-prompt');
         let count = 0;
 
-        // 随机散落
+        // 随机散落逻辑保持不变
         function scatter() {
             pieces.forEach(p => {
                 const x = Math.random() > 0.5 ? Math.random()*150 : window.innerWidth - 300;
-                const y = 150 + Math.random()*(window.innerHeight - 300);
+                const y = 150 + Math.random()*(window.innerHeight - 350);
                 const r = (Math.random()-0.5)*40;
                 p.style.left = x + 'px';
                 p.style.top = y + 'px';
