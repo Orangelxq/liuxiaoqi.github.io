@@ -6,128 +6,201 @@
     <title>About | Xiaoqi Liu</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
-    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
-    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-
+    
     <style>
         :root {
-            --orange-main: #ff9a44;
-            /* 6个淡淡的艺术色，让画面丰富而不杂乱 */
-            --color-1: #f0f4f8; /* 冰川蓝 - Gen */
-            --color-2: #fff5f5; /* 樱花粉 - MBTI */
-            --color-3: #f6fcf6; /* 薄荷绿 - PhD */
-            --color-4: #fff9f0; /* 暖阳橘 - Art */
-            --color-5: #f9f6ff; /* 薰衣草紫 - Music */
-            --color-6: #fffdf0; /* 奶油黄 - Dream */
+            --main-orange: #ff9a44;
+            --gradient: linear-gradient(to right, #ff7e5f, #feb47b, #ff9a44);
+            /* 方块的柔和底色 */
+            --color-1: #f0f4f8; /* Generation */
+            --color-2: #fff5f5; /* MBTI */
+            --color-3: #f6fcf6; /* Location */
+            --color-4: #fff9f0; /* Hobbies */
+            --color-5: #f9f6ff; /* Music Soul */
+            --color-6: #fffdf0; /* Ultimate Dream */
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body, html { 
-            height: 100%; font-family: 'Special Elite', serif; 
-            background-color: #fff; color: #333; overflow: hidden; 
+            height: 100%;
+            font-family: 'Special Elite', serif; 
+            background-color: #fff; 
+            color: #333;
+            overflow: hidden; /* 防止拼图散落到屏幕外 */
         }
 
-        /* --- 导航栏 --- */
+        /* --- 导航栏 (保持全站统一) --- */
         nav {
-            background: #111; padding: 20px 0; display: flex;
-            justify-content: space-around; position: fixed;
-            top: 0; width: 100%; z-index: 2000;
+            background: #111;
+            padding: 20px 0;
+            display: flex;
+            justify-content: space-around;
+            position: fixed;
+            top: 0; width: 100%;
+            z-index: 2000; /* 确保在最上层 */
         }
-        nav a { color: white; text-decoration: none; font-size: 1.3rem; transition: 0.3s; }
-        nav a:hover { color: var(--orange-main); }
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.3rem;
+            transition: 0.3s;
+        }
+        nav a:hover { color: var(--main-orange); }
 
+        /* --- 主容器 --- */
         .puzzle-wrapper {
-            position: relative; height: 100vh; display: flex;
-            flex-direction: column; align-items: center; justify-content: center;
+            position: relative;
+            height: 100vh;
+            padding-top: 80px; /* 留出导航栏空间 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .page-title {
-            font-size: 3rem; margin-top: 50px; margin-bottom: 20px;
-            background: linear-gradient(to right, #ff7e5f, #feb47b, #ff9a44);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            font-weight: bold; z-index: 10;
+            font-size: 3rem;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+            z-index: 10;
         }
 
+        /* --- 交互提示词 "drag me" --- */
         #drag-prompt {
-            font-size: 1.3rem; color: var(--orange-main);
-            animation: pulse 1.5s infinite; z-index: 10; margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: var(--main-orange);
+            margin-bottom: 10px;
+            animation: pulse 1.5s infinite;
+            z-index: 10;
         }
 
-        /* --- 拼图底盘 (花朵形状) --- */
-        .puzzle-base {
-            position: relative; width: 450px; height: 450px;
-            display: flex; align-items: center; justify-content: center;
+        /* --- 拼图完成后的欢迎语 --- */
+        #welcome-message {
+            font-size: 2.5rem;
+            margin-top: 40px;
+            color: #111;
+            opacity: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            transition: opacity 2s ease-in-out;
+            z-index: 10;
+            letter-spacing: 2px;
+        }
+        #welcome-message.show {
+            opacity: 1;
         }
 
-        /* --- 核心修改：全面精准对应虚线底稿 --- */
-        .base-outline {
-            position: absolute; width: 100%; height: 100%;
-            fill: none; stroke: #eee; stroke-width: 2;
-            stroke-dasharray: 8, 8; /* 虚线 */
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* 定义统一的花瓣形状在 SVG 中供复用 */
-        /* d="M100,20 C140,20 200,80 100,200 C0,80 60,20 100,20 Z" 是一个柔和的水滴瓣 */
-
-        /* 放置槽位 (Drop Zones) */
-        .drop-zone {
-            position: absolute; width: 225px; height: 225px;
+        /* --- 拼图底盘 (放置区域) --- */
+        .puzzle-board {
+            width: 900px;
+            height: 500px;
+            background: rgba(240, 240, 240, 0.5);
+            border: 2px dashed #ccc;
+            border-radius: 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 15px;
+            padding: 15px;
+            margin-top: 20px;
+            position: relative;
             z-index: 1;
         }
 
-        /* --- 拼图碎片 --- */
-        .piece {
-            position: absolute; width: 180px; height: 180px;
-            cursor: grab; z-index: 100;
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            opacity: 0; animation: fadeIn 0.5s forwards;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+        /* 放置槽位样式 */
+        .drop-zone {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.05);
         }
-        .piece.dragging { opacity: 0.6; cursor: grabbing; scale: 1.1; }
-        /* 拼入后的状态：移除随机旋转，精准对齐 */
-        .piece.snapped { position: absolute !important; transform: none !important; cursor: default; filter: none; }
-
-        /* 碎片内的文字布局 */
-        .piece-content {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%; color: #111; text-align: center;
-            pointer-events: none;
+        .drop-zone.hovered {
+            background: rgba(255, 154, 68, 0.1);
+            border-color: var(--main-orange);
         }
-        .piece-content h3 { font-size: 0.8rem; margin-bottom: 5px; opacity: 0.9; }
-        .piece-content p { font-size: 0.95rem; line-height: 1.2; }
 
-        /* 欢迎语 */
-        #welcome-msg {
-            position: fixed; bottom: 60px; font-size: 2.8rem;
-            color: var(--orange-main); opacity: 0;
-            transition: 2.5s ease-in-out; letter-spacing: 3px;
+        /* --- 拼图方块卡片 (可拖拽) --- */
+        .keyword-card {
+            width: 275px; /* 略小于槽位以留出间隙 */
+            height: 225px;
+            padding: 25px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            cursor: grab; /* 抓取手势 */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.05);
+            position: absolute; /* 初始处于散落状态 */
+            transition: transform 0.2s ease;
+            z-index: 100;
         }
-        #welcome-msg.show { opacity: 1; }
+        
+        /* 拖拽时的样式 */
+        .keyword-card.dragging {
+            opacity: 0.7;
+            cursor: grabbing;
+            transform: scale(1.05);
+            z-index: 1000;
+        }
 
+        /* 成功拼入后的样式 */
+        .keyword-card.snapped {
+            position: static; /* 回归标准流，放入 Grid 槽位 */
+            transform: rotate(0deg) !important; /* 强制归正 */
+            cursor: default;
+            box-shadow: none;
+            border-color: rgba(0,0,0,0.05);
+        }
+
+        .keyword-card h3 {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .keyword-card p {
+            font-size: 1.3rem;
+            color: #111;
+            line-height: 1.4;
+        }
+
+        /* 分配方块底色 */
+        .card-1 { background-color: var(--color-1); }
+        .card-2 { background-color: var(--color-2); }
+        .card-3 { background-color: var(--color-3); }
+        .card-4 { background-color: var(--color-4); }
+        .card-5 { background-color: var(--color-5); }
+        .card-6 { background-color: var(--color-6); }
+
+        /* --- 动画与适配 --- */
         @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.7; }
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
         }
-        @keyframes fadeIn { to { opacity: 1; } }
 
-        /* --- 精准位置坐标 --- */
-        .z1 { top: 30px; left: 30px; }
-        .z2 { top: 30px; left: 195px; }
-        .z3 { top: 160px; left: 30px; }
-        .z4 { top: 160px; left: 195px; }
-        .z5 { top: 290px; left: 112px; } /* 底瓣 */
-        .z6 { top: -60px; left: 180px; } /* 顶部艺术瓣 */
-
+        /* 响应式调整 (暂时不适用移动端，因为拖拽对手机端不友好) */
+        @media (max-width: 1024px) {
+            .puzzle-board { width: 95%; height: auto; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 1fr); }
+            .keyword-card { width: 100%; height: 200px; position: static; transform: none !important; margin-bottom: 15px; }
+            #drag-prompt { display: none; } /* 手机端直接展示拼好的 */
+            .puzzle-board { border: none; background: none; }
+            #welcome-message { opacity: 1; font-size: 1.8rem; }
+        }
     </style>
 </head>
 <body>
 
     <nav>
         <a href="index.html">Home</a>
-        <a href="about.html" style="color: var(--orange-main);">About</a>
+        <a href="about.html" style="color: var(--main-orange);">About</a>
         <a href="academic.html">Academic</a>
         <a href="travel.html">Travel</a>
         <a href="life.html">Life</a>
@@ -135,95 +208,173 @@
 
     <div class="puzzle-wrapper">
         <h1 class="page-title">Who is Xiaoqi?</h1>
-        <div id="drag-prompt">-> Soft Petal Assembly <-</div>
+        
+        <div id="drag-prompt">-> drag me <-</div>
 
-        <div class="puzzle-base">
-            <svg class="base-outline" viewBox="0 0 450 450">
-                <path d="M225,225 Q225,135 135,135" />    <path d="M225,225 Q315,135 315,225" />    <path d="M225,225 Q315,315 225,315" />    <path d="M225,225 Q135,315 135,225" />    <path d="M225,225 Q135,135 225,135" />    <circle cx="225" cy="225" r="180" />
-
-                <path d="M225,45 Q260,10 320,30 Q280,60 225,45" />
-            </svg>
-
-            <div class="drop-zone z1" data-target="p1"></div>
-            <div class="drop-zone z2" data-target="p2"></div>
-            <div class="drop-zone z3" data-target="p3"></div>
-            <div class="drop-zone z4" data-target="p4"></div>
-            <div class="drop-zone z5" data-target="p5"></div>
-            <div class="drop-zone z6" data-target="p6"></div>
+        <div class="puzzle-board">
+            <div class="drop-zone" data-piece="card-1"></div>
+            <div class="drop-zone" data-piece="card-2"></div>
+            <div class="drop-zone" data-piece="card-3"></div>
+            <div class="drop-zone" data-piece="card-4"></div>
+            <div class="drop-zone" data-piece="card-5"></div>
+            <div class="drop-zone" data-piece="card-6"></div>
         </div>
 
-        <div id="welcome-msg">Welcome to My World.</div>
+        <div id="welcome-message">Welcome to My World.</div>
 
-        <div class="piece p1" id="p1" draggable="true">
-            <svg viewBox="0 0 180 180"><path d="M162,162 Q18,162 18,18 Q162,18 162,162" fill="#f0f4f8"/></svg>
-            <div class="piece-content"><h3>Born</h3><p>2000</p></div>
+        <div class="keyword-card card-1" draggable="true" id="card-1">
+            <h3>Generation</h3>
+            <p>A "millennium baby" born in 2000.</p>
         </div>
-        <div class="piece p2" id="p2" draggable="true">
-            <svg viewBox="0 0 180 180"><path d="M18,162 Q162,162 162,18 Q18,18 18,162" fill="#fff5f5"/></svg>
-            <div class="piece-content"><h3>MBTI</h3><p>ENFP</p></div>
+
+        <div class="keyword-card card-2" draggable="true" id="card-2">
+            <h3>MBTI</h3>
+            <p>A typical ENFP, a true Campaigner.</p>
         </div>
-        <div class="piece p3" id="p3" draggable="true">
-            <svg viewBox="0 0 180 180"><path d="M162,18 Q162,162 18,162 Q18,18 162,18" fill="#f6fcf6"/></svg>
-            <div class="piece-content"><h3>PhD</h3><p>Cambridge</p></div>
+
+        <div class="keyword-card card-3" draggable="true" id="card-3">
+            <h3>Location</h3>
+            <p>Currently happily drifting in Cambridge, UK.</p>
         </div>
-        <div class="piece p4" id="p4" draggable="true">
-            <svg viewBox="0 0 180 180"><path d="M18,18 Q162,18 162,162 Q18,162 18,18" fill="#fff9f0"/></svg>
-            <div class="piece-content"><h3>Art</h3><p>Music</p></div>
+
+        <div class="keyword-card card-4" draggable="true" id="card-4">
+            <h3>Hobbies</h3>
+            <p>Painting, Singing & Traveling around the globe.</p>
         </div>
-        <div class="piece p5" id="p5" draggable="true">
-            <svg viewBox="0 0 180 180"><path d="M18,18 Q90,162 162,18 L90,0 Z" fill="#f9f6ff"/></svg>
-            <div class="piece-content" style="top:40%"><h3>Joy</h3><p>Travel</p></div>
+
+        <div class="keyword-card card-5" draggable="true" id="card-5">
+            <h3>Music Soul</h3>
+            <p>Piano (Grade 10) & Flute (Grade 9).</p>
         </div>
-        <div class="piece p6" id="p6" draggable="true" style="width:140px; height:80px;">
-            <svg viewBox="0 0 140 80"><path d="M0,45 Q40,0 140,20 Q80,70 0,45" fill="#fffdf0"/></svg>
-            <div class="piece-content"><p style="color:#2b450c; font-size:0.8rem;">Dream Café</p></div>
+
+        <div class="keyword-card card-6" draggable="true" id="card-6">
+            <h3>Ultimate Dream</h3>
+            <p>"To run a cozy, soulful café where every cup tells a story."</p>
         </div>
+
     </div>
 
     <script>
-        const pieces = document.querySelectorAll('.piece');
-        const zones = document.querySelectorAll('.drop-zone');
-        const welcome = document.getElementById('welcome-msg');
+        // 1. 初始化：让拼图方块散落在屏幕四周
+        const cards = document.querySelectorAll('.keyword-card');
+        const board = document.querySelector('.puzzle-board');
         const prompt = document.getElementById('drag-prompt');
-        let count = 0;
+        const welcome = document.getElementById('welcome-message');
+        let piecesSnapped = 0; // 记录已成功拼入的数量
 
-        // 随机散落逻辑
-        function scatter() {
-            pieces.forEach(p => {
-                const x = Math.random() > 0.5 ? Math.random()*150 : window.innerWidth - 300;
-                const y = 150 + Math.random()*(window.innerHeight - 300);
-                const r = (Math.random()-0.5)*40;
-                p.style.left = x + 'px';
-                p.style.top = y + 'px';
-                p.style.transform = `rotate(${r}deg)`;
-                // 确保移动端不旋转 (可选，为了更好的适配)
-                if (window.innerWidth <= 1024) p.style.transform = 'none';
+        function scatterPieces() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            cards.forEach(card => {
+                // 如果是移动端，不进行散落处理
+                if (width <= 1024) return;
+
+                // 随机位置 (避开中间的底盘区域)
+                let randomX, randomY;
+                if (Math.random() > 0.5) {
+                    // 散落在左侧或右侧
+                    randomX = Math.random() > 0.5 ? Math.random() * (width * 0.2) : width * 0.8 + Math.random() * (width * 0.15);
+                    randomY = 100 + Math.random() * (height - 300);
+                } else {
+                    // 散落在底部
+                    randomX = Math.random() * (width - 250);
+                    randomY = height * 0.75 + Math.random() * (height * 0.15);
+                }
+
+                // 随机旋转角度 (-20度 到 20度)
+                const randomRotate = (Math.random() - 0.5) * 40;
+
+                card.style.left = randomX + 'px';
+                card.style.top = randomY + 'px';
+                card.style.transform = `rotate(${randomRotate}deg)`;
             });
         }
-        window.onload = scatter;
-        // window.onresize = scatter;
 
-        let dragged = null;
-        pieces.forEach(p => {
-            p.addEventListener('dragstart', () => { dragged = p; p.classList.add('dragging'); });
-            p.addEventListener('dragend', () => p.classList.remove('dragging'));
+        // 页面加载和调整大小时重新散落
+        window.addEventListener('load', scatterPieces);
+        // window.addEventListener('resize', scatterPieces); // 调整大小时可选是否重新散落
+
+        // --- 2. 拖放交互逻辑 ---
+
+        let draggedPiece = null;
+
+        // A. 方块 (Draggable Items) 的事件
+        cards.forEach(card => {
+            card.addEventListener('dragstart', (e) => {
+                draggedPiece = card;
+                card.classList.add('dragging');
+                // 设置拖拽时的图片（可选，默认为方块本身）
+                // e.dataTransfer.setDragImage(card, 137, 112);
+            });
+
+            card.addEventListener('dragend', () => {
+                draggedPiece.classList.remove('dragging');
+                draggedPiece = null;
+            });
         });
 
-        zones.forEach(z => {
-            z.addEventListener('dragover', e => e.preventDefault());
-            z.addEventListener('drop', () => {
-                if (dragged.id === z.getAttribute('data-target')) {
-                    z.appendChild(dragged);
-                    dragged.classList.add('snapped');
-                    dragged.draggable = false;
-                    count++;
-                    if (count === 6) {
-                        welcome.classList.add('show');
-                        prompt.style.display = 'none';
-                    }
+        // B. 放置槽位 (Drop Zones) 的事件
+        const dropZones = document.querySelectorAll('.drop-zone');
+
+        dropZones.forEach(zone => {
+            // dragover 必须阻止默认行为，才能允许 drop
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault(); 
+                if (!zone.firstChild) { // 只有空槽位才显示悬停效果
+                    zone.classList.add('hovered');
+                }
+            });
+
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('hovered');
+            });
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('hovered');
+
+                // 检查拖拽的方块是否匹配该槽位
+                const pieceId = draggedPiece.getAttribute('id');
+                const targetPiece = zone.getAttribute('data-piece');
+
+                if (pieceId === targetPiece && !zone.firstChild) {
+                    // 成功匹配！
+                    // 1. 将方块放入槽位中
+                    zone.appendChild(draggedPiece);
+                    
+                    // 2. 修改方块样式（变为静态网格元素）
+                    draggedPiece.classList.add('snapped');
+                    draggedPiece.removeAttribute('draggable'); // 防止再次被拖拽
+
+                    // 3. 更新计数
+                    piecesSnapped++;
+                    checkCompletion();
+                } else {
+                    // 不匹配，方块会回到原处（浏览器默认行为）
+                    console.log("Not the right spot!");
                 }
             });
         });
+
+        // --- 3. 检查完成情况与最终动画 ---
+
+        function checkCompletion() {
+            if (piecesSnapped === 6) {
+                // 全部拼好！
+                // A. 隐藏提示词
+                prompt.style.display = 'none';
+                
+                // B. 缓缓出现欢迎语
+                welcome.classList.add('show');
+
+                // C. 让底盘的虚线边框变实，象征完成
+                board.style.borderStyle = 'solid';
+                board.style.borderColor = 'var(--main-orange)';
+                board.style.backgroundColor = 'rgba(255, 154, 68, 0.05)';
+            }
+        }
+
     </script>
 </body>
 </html>
