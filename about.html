@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About | Xiaoqi Liu</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --main-orange: #ff9a44;
+            --gradient: linear-gradient(to right, #ff7e5f, #feb47b, #ff9a44);
+            --bg-paper: #f8f8f8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Special Elite', serif; 
+            background-color: var(--bg-paper); 
+            color: #333; 
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- 1. 统一导航栏 --- */
+        nav {
+            background: #111;
+            padding: 20px 0;
+            display: flex;
+            justify-content: space-around;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.3rem;
+            transition: 0.3s;
+        }
+        nav a:hover { color: var(--main-orange); }
+
+        .container { 
+            max-width: 1000px; 
+            margin: 60px auto; 
+            padding: 0 40px; 
+            text-align: center;
+        }
+
+        /* --- 2. 标题动画 --- */
+        .page-title {
+            font-size: 4rem;
+            margin-bottom: 80px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+            opacity: 0;
+            animation: fadeInDown 1.2s forwards;
+        }
+
+        /* --- 3. 个人简介卡片布局 --- */
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            perspective: 1000px; /* 为3D交互做准备 */
+        }
+
+        .keyword-card {
+            background: white;
+            padding: 40px;
+            border-radius: 4px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-bottom: 3px solid #eee;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: default;
+            opacity: 0;
+        }
+
+        .keyword-card:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            border-bottom-color: var(--main-orange);
+            box-shadow: 0 15px 30px rgba(255, 154, 68, 0.2);
+        }
+
+        .keyword-card h3 {
+            font-size: 1.1rem;
+            color: #888;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .keyword-card p {
+            font-size: 1.6rem;
+            color: #111;
+        }
+
+        /* 咖啡馆梦想的特殊样式 */
+        .dream-card {
+            grid-column: span 2;
+            background: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), 
+                        url('data:image/svg+xml,%3Csvg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M0 0h20L0 20z" fill="%23ff9a44" fill-opacity=".05"/%3E%3C/svg%3E');
+        }
+
+        /* --- 4. 底部波浪线 (呼应 Life 页面) --- */
+        .wave-line {
+            width: 100%;
+            height: 30px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 20' preserveAspectRatio='none'%3E%3Cpath d='M0,10 C150,20 350,0 500,10 C650,20 850,0 1000,10 C1150,20 1200,10 1200,10' stroke='black' fill='transparent' stroke-width='1'/%3E%3C/svg%3E");
+            background-repeat: repeat-x;
+            margin: 80px 0;
+            opacity: 0.3;
+        }
+
+        /* --- 5. 动画定义 --- */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 分次入场动画 */
+        .card-1 { animation: fadeInUp 1s 0.2s forwards; }
+        .card-2 { animation: fadeInUp 1s 0.4s forwards; }
+        .card-3 { animation: fadeInUp 1s 0.6s forwards; }
+        .card-4 { animation: fadeInUp 1s 0.8s forwards; }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .about-grid { grid-template-columns: 1fr; }
+            .dream-card { grid-column: span 1; }
+            .page-title { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="about.html" style="color: var(--main-orange);">About</a>
+        <a href="academic.html">Academic</a>
+        <a href="travel.html">Travel</a>
+        <a href="life.html">Life</a>
+    </nav>
+
+    <div class="container">
+        <h1 class="page-title">Who is Xiaoqi?</h1>
+
+        <div class="about-grid">
+            <div class="keyword-card card-1">
+                <h3>Generation</h3>
+                <p>Born in 2000.</p>
+            </div>
+
+            <div class="keyword-card card-2">
+                <h3>Personality</h3>
+                <p>A typical ENFP.</p>
+            </div>
+
+            <div class="keyword-card card-3">
+                <h3>Current Status</h3>
+                <p>Happily pursuing a PhD at the University of Cambridge.</p>
+            </div>
+
+            <div class="keyword-card card-4 dream-card">
+                <h3>The Ultimate Dream</h3>
+                <p>"To run a cozy, soulful café where every cup tells a story."</p>
+            </div>
+        </div>
+
+        <div class="wave-line"></div>
+
+        <p style="font-size: 1.2rem; color: #666; margin-bottom: 100px;">
+            Beyond research and data, I find my harmony between the keys of a piano and the melody of a flute.
+        </p>
+    </div>
+
+</body>
+</html>
