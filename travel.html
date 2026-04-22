@@ -23,8 +23,8 @@
 
         /* --- 导航栏 --- */
         nav {
-            background: rgba(17, 17, 17, 0.7);
-            backdrop-filter: blur(10px); /* 毛玻璃效果 */
+            background: rgba(17, 17, 17, 0.8);
+            backdrop-filter: blur(10px);
             padding: 20px 0;
             display: flex;
             justify-content: space-around;
@@ -61,44 +61,57 @@
             filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
         }
 
-        /* --- Mapbox 弹出框样式定制 --- */
+        /* --- Mapbox 弹出框自定义样式 --- */
         .mapboxgl-popup { z-index: 20; }
         .mapboxgl-popup-content {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(5px);
+            background: rgba(255, 255, 255, 0.98);
             color: #222;
             border-radius: 12px;
-            padding: 0; /* 让图片填满顶部 */
+            padding: 0;
             overflow: hidden;
             box-shadow: 0 15px 35px rgba(0,0,0,0.5);
             border: none;
         }
-        .mapboxgl-popup-close-button {
-            color: #fff; font-size: 20px; padding: 10px; z-index: 30;
-        }
         
-        .popup-card { width: 220px; }
-        .popup-img {
-            width: 100%; height: 160px;
-            object-fit: cover;
-            display: block;
+        .popup-card { width: 260px; } /* 略微加宽以展示照片 */
+        
+        /* 多图滚动容器 */
+        .popup-image-container {
+            max-height: 280px; /* 限制高度 */
+            overflow-y: auto;  /* 纵向滚动 */
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            background: #eee;
         }
-        .popup-text { padding: 15px; }
+
+        /* 滚动条美化 */
+        .popup-image-container::-webkit-scrollbar { width: 5px; }
+        .popup-image-container::-webkit-scrollbar-thumb { background: var(--main-orange); border-radius: 10px; }
+
+        .popup-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+
+        .popup-text { padding: 15px; background: white; }
         .popup-title { 
             font-family: 'Special Elite', serif;
-            font-weight: bold; font-size: 1.2rem; 
+            font-weight: bold; font-size: 1.3rem; 
             margin-bottom: 5px; color: #111; 
         }
-        .popup-date { font-size: 0.85rem; color: #666; }
+        .popup-date { font-size: 0.9rem; color: #666; }
 
-        /* --- 动态发光标记点 --- */
+        /* --- 标记点 --- */
         .marker {
-            width: 18px; height: 18px;
+            width: 20px; height: 20px;
             background: var(--main-orange);
             border: 2px solid white;
             border-radius: 50%;
             cursor: pointer;
-            box-shadow: 0 0 10px var(--main-orange), 0 0 20px var(--main-orange);
+            box-shadow: 0 0 15px var(--main-orange);
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .marker:hover { transform: scale(1.5); }
@@ -121,44 +134,49 @@
     <div id="map"></div>
 
     <script>
-        // 你的真实 Token
+        // 你的 Mapbox Token
         mapboxgl.accessToken = 'pk.eyJ1IjoidmFtcGlyZTciLCJhIjoiY2s2Z2NkcmU0MWh5djNsbXd1YTJ1a3M3OCJ9.QCaAry4KAI3VFJXsJGXG8w';
 
         const map = new mapboxgl.Map({
             container: 'map',
-            style: 'mapbox://styles/mapbox/dark-v11', // 深色艺术风格
-            center: [8, 42], // 初始中心点（欧洲中部）
+            style: 'mapbox://styles/mapbox/dark-v11', 
+            center: [8, 42], 
             zoom: 3.8, 
-            pitch: 45, // 倾斜视角，更有立体感
+            pitch: 45, 
             bearing: -10
         });
 
         // 旅游数据
         const locations = [
             {
+                name: 'Venice',
+                date: 'Oct 2022',
+                coords: [12.3155, 45.4408],
+                images: ['images/venice1.jpg', 'images/venice2.jpg', 'images/venice3.jpg']
+            },
+            {
                 name: 'Barcelona',
                 date: 'Aug 2023',
                 coords: [2.1734, 41.3851],
-                img: 'images/barcelona_thumb.jpg' 
+                images: ['images/barcelona_thumb.jpg'] 
             },
             {
                 name: 'Seville',
                 date: 'Aug 2023',
                 coords: [-5.9845, 37.3891],
-                img: 'images/seville_thumb.jpg'
-            },
-            {
-                name: 'Venice',
-                date: 'Oct 2022',
-                coords: [12.3155, 45.4408],
-                img: 'images/venice_thumb.jpg'
+                images: ['images/seville_thumb.jpg']
             }
         ];
 
-        // 遍历并添加标记点
+        // 遍历并添加点位
         locations.forEach(loc => {
             const el = document.createElement('div');
             el.className = 'marker';
+
+            // 生成多图 HTML
+            const imagesHtml = loc.images.map(img => 
+                `<img src="${img}" class="popup-img" onerror="this.src='https://via.placeholder.com/260x180?text=Photo+Coming+Soon'">`
+            ).join('');
 
             const popup = new mapboxgl.Popup({ 
                 offset: 30,
@@ -166,7 +184,9 @@
                 maxWidth: 'none'
             }).setHTML(`
                 <div class="popup-card">
-                    <img src="${loc.img}" class="popup-img" onerror="this.src='https://via.placeholder.com/220x160?text=Travel+Photo'">
+                    <div class="popup-image-container">
+                        ${imagesHtml}
+                    </div>
                     <div class="popup-text">
                         <div class="popup-title">${loc.name}</div>
                         <div class="popup-date">${loc.date}</div>
@@ -174,13 +194,12 @@
                 </div>
             `);
 
-            // 创建 Marker 并添加到地图
-            const marker = new mapboxgl.Marker(el)
+            new mapboxgl.Marker(el)
                 .setLngLat(loc.coords)
                 .setPopup(popup)
                 .addTo(map);
 
-            // 点击点位时，地图自动平移到中心
+            // 点击平移效果
             el.addEventListener('click', () => {
                 map.flyTo({
                     center: loc.coords,
@@ -191,7 +210,6 @@
             });
         });
 
-        // 添加地图缩放工具
         map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
     </script>
 </body>
