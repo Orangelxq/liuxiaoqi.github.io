@@ -2,50 +2,185 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>Life Moments | Xiaoqi Liu</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life | Xiaoqi Liu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Special+Elite&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #222; color: white; padding-bottom: 50px; }
-        
-        .page-title { 
-            font-family: 'Dancing Script', cursive; 
-            font-size: 4rem; text-align: center; padding: 50px 0;
-            background: linear-gradient(to right, #ff7e5f, #feb47b, #ff9a44);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        :root {
+            --bg-color: #f4f4f4; /* 浅灰色背景，呼应图片 */
+            --main-orange: #ff9a44;
         }
 
-        /* 瀑布流/卡片网格 */
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            grid-gap: 15px;
-            max-width: 1200px; margin: 0 auto; padding: 0 20px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        .gallery-item { position: relative; overflow: hidden; border-radius: 8px; cursor: pointer; }
-        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
-        .gallery-item:hover img { transform: scale(1.1); }
-        
-        .gallery-desc {
-            position: absolute; bottom: 0; left: 0; width: 100%;
-            background: linear-gradient(transparent, rgba(0,0,0,0.8));
-            padding: 15px; opacity: 0; transition: opacity 0.3s;
+        body { 
+            background-color: var(--bg-color);
+            font-family: 'Special Elite', system-ui, serif;
+            overflow-x: hidden;
+            color: #1a1a1a;
         }
-        .gallery-item:hover .gallery-desc { opacity: 1; }
+
+        /* 导航栏保持统一 */
+        nav {
+            background: #111;
+            padding: 20px 0;
+            display: flex;
+            justify-content: space-around;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            transition: 0.3s;
+        }
+        nav a:hover { color: var(--main-orange); }
+
+        /* 页面标题：Life. */
+        .page-header {
+            padding: 60px 10% 20px;
+        }
+        .page-header h1 {
+            font-size: 4rem;
+            font-weight: bold;
+            margin-bottom: 0;
+        }
+
+        /* 照片散落区域 */
+        .photo-scatter-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            padding: 0 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        .polaroid {
+            background: white;
+            padding: 10px 10px 30px 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            margin: 10px;
+            transition: all 0.4s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .polaroid img {
+            width: 150px; /* 照片宽度 */
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* 模拟图钉或胶带效果 */
+        .polaroid::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 15px;
+            background: rgba(255,255,255,0.5);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* 设置每张照片不同的旋转角度和层级 */
+        .p1 { transform: rotate(-5deg); z-index: 1; }
+        .p2 { transform: rotate(3deg); z-index: 2; }
+        .p3 { transform: rotate(-8deg); z-index: 1; }
+        .p4 { transform: rotate(5deg); z-index: 3; }
+        .p5 { transform: rotate(-2deg); z-index: 2; }
+
+        .polaroid:hover {
+            transform: rotate(0deg) scale(1.1);
+            z-index: 100;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        /* 波浪线和分类展示区 */
+        .categories-section {
+            padding: 50px 10%;
+        }
+
+        .category-item {
+            position: relative;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+
+        .category-label {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* 这里的 SVG 路径模拟手绘波浪线 */
+        .wave-line {
+            width: 100%;
+            height: 20px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 20' preserveAspectRatio='none'%3E%3Cpath d='M0,10 C150,20 350,0 500,10 C650,20 850,0 1000,10 C1150,20 1200,10 1200,10' stroke='black' fill='transparent' stroke-width='1'/%3E%3C/svg%3E");
+            background-repeat: repeat-x;
+            opacity: 0.6;
+        }
+
     </style>
 </head>
 <body>
-    <h1 class="page-title">Life & Moments</h1>
-    <div class="gallery">
-        <div class="gallery-item">
-            <img src="images/life1.jpg" alt="Life Moment 1">
-            <div class="gallery-desc">A beautiful sunset</div>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="academic.html">Academic</a>
+        <a href="travel.html">Travel</a>
+        <a href="life.html" style="color: #ff9a44;">Life</a>
+    </nav>
+
+    <header class="page-header">
+        <h1>Life.</h1>
+    </header>
+
+    <main>
+        <div class="photo-scatter-container">
+            <div class="polaroid p1">
+                <img src="images/life1.jpg" alt="Life 1">
+            </div>
+            <div class="polaroid p2">
+                <img src="images/life2.jpg" alt="Life 2">
+            </div>
+            <div class="polaroid p3">
+                <img src="images/life3.jpg" alt="Life 3">
+            </div>
+            <div class="polaroid p4">
+                <img src="images/life1.jpg" alt="Life 4">
+            </div>
+            <div class="polaroid p5">
+                <img src="images/life2.jpg" alt="Life 5">
+            </div>
         </div>
-        <div class="gallery-item">
-            <img src="images/life2.jpg" alt="Life Moment 2">
-            <div class="gallery-desc">Weekend hiking trip</div>
+
+        <div class="categories-section">
+            <div class="category-item">
+                <span class="category-label">Hobbies</span>
+                <div class="wave-line"></div>
+            </div>
+
+            <div class="category-item">
+                <span class="category-label">Visual Display</span>
+                <div class="wave-line"></div>
+            </div>
+
+            <div class="category-item">
+                <span class="category-label">Social Media Content</span>
+                <div class="wave-line"></div>
+            </div>
         </div>
-    </div>
+    </main>
+
 </body>
 </html>
