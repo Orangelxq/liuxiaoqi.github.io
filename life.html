@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Life | Xiaoqi Liu</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Special+Elite&display=swap" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --bg-color: #f4f4f4; /* 浅灰色背景，呼应图片 */
+            --bg-color: #f4f4f4; /* 浅灰色背景 */
             --main-orange: #ff9a44;
         }
 
@@ -15,12 +17,12 @@
         
         body { 
             background-color: var(--bg-color);
-            font-family: 'Special Elite', system-ui, serif;
+            font-family: 'Special Elite', serif; /* 全局使用打字机字体 */
             overflow-x: hidden;
             color: #1a1a1a;
         }
 
-        /* 导航栏保持统一 */
+        /* --- 统一导航栏 --- */
         nav {
             background: #111;
             padding: 20px 0;
@@ -33,13 +35,17 @@
         nav a {
             color: white;
             text-decoration: none;
-            font-family: 'Dancing Script', cursive;
-            font-size: 1.5rem;
+            font-family: 'Special Elite', serif; /* 关键：改为打字机字体 */
+            font-size: 1.3rem;
+            letter-spacing: 1px;
             transition: 0.3s;
         }
-        nav a:hover { color: var(--main-orange); }
+        nav a:hover { 
+            color: var(--main-orange); 
+            transform: scale(1.05);
+        }
 
-        /* 页面标题：Life. */
+        /* 页面大标题：Life. */
         .page-header {
             padding: 60px 10% 20px;
         }
@@ -49,7 +55,7 @@
             margin-bottom: 0;
         }
 
-        /* 照片散落区域 */
+        /* --- 照片散落区域 --- */
         .photo-scatter-container {
             position: relative;
             width: 100%;
@@ -65,69 +71,70 @@
             background: white;
             padding: 10px 10px 30px 10px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            margin: 10px;
+            margin: 15px;
             transition: all 0.4s ease;
             position: relative;
             cursor: pointer;
         }
 
         .polaroid img {
-            width: 150px; /* 照片宽度 */
-            height: 200px;
+            width: 160px; 
+            height: 220px;
             object-fit: cover;
             display: block;
         }
 
-        /* 模拟图钉或胶带效果 */
+        /* 模拟顶部胶带 */
         .polaroid::before {
             content: "";
             position: absolute;
             top: -10px;
             left: 50%;
             transform: translateX(-50%);
-            width: 40px;
-            height: 15px;
-            background: rgba(255,255,255,0.5);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            width: 45px;
+            height: 18px;
+            background: rgba(200, 200, 200, 0.3);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
-        /* 设置每张照片不同的旋转角度和层级 */
-        .p1 { transform: rotate(-5deg); z-index: 1; }
-        .p2 { transform: rotate(3deg); z-index: 2; }
-        .p3 { transform: rotate(-8deg); z-index: 1; }
-        .p4 { transform: rotate(5deg); z-index: 3; }
-        .p5 { transform: rotate(-2deg); z-index: 2; }
+        /* 随机旋转角度 */
+        .p1 { transform: rotate(-6deg); }
+        .p2 { transform: rotate(4deg); }
+        .p3 { transform: rotate(-3deg); }
+        .p4 { transform: rotate(7deg); }
+        .p5 { transform: rotate(-2deg); }
 
         .polaroid:hover {
             transform: rotate(0deg) scale(1.1);
             z-index: 100;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
         }
 
-        /* 波浪线和分类展示区 */
+        /* --- 分类展示区（带手绘波浪线） --- */
         .categories-section {
-            padding: 50px 10%;
+            padding: 80px 10%;
         }
 
         .category-item {
             position: relative;
-            margin-bottom: 60px;
+            margin-bottom: 80px;
             text-align: center;
         }
 
         .category-label {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
+            font-size: 2rem;
+            margin-bottom: 15px;
             display: block;
+            letter-spacing: 2px;
         }
 
-        /* 这里的 SVG 路径模拟手绘波浪线 */
+        /* 手绘感 SVG 波浪线 */
         .wave-line {
             width: 100%;
-            height: 20px;
+            height: 30px;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 20' preserveAspectRatio='none'%3E%3Cpath d='M0,10 C150,20 350,0 500,10 C650,20 850,0 1000,10 C1150,20 1200,10 1200,10' stroke='black' fill='transparent' stroke-width='1'/%3E%3C/svg%3E");
             background-repeat: repeat-x;
-            opacity: 0.6;
+            opacity: 0.4;
         }
 
     </style>
