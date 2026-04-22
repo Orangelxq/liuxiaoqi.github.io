@@ -10,13 +10,13 @@
     <style>
         :root {
             --main-orange: #ff9a44;
-            /* 调色盘：淡淡的艺术色系 */
-            --color-1: #f0f4f8; /* 浅蓝灰 */
-            --color-2: #fff5f5; /* 浅粉红 */
-            --color-3: #f6fcf6; /* 浅薄荷 */
-            --color-4: #fff9f0; /* 浅暖橘 */
-            --color-5: #f9f6ff; /* 浅淡紫 */
-            --color-6: #fffdf0; /* 浅奶油黄 */
+            /* 6个淡淡的艺术色，让画面丰富而不杂乱 */
+            --color-1: #f0f4f8; /* 冰川蓝 */
+            --color-2: #fff5f5; /* 樱花粉 */
+            --color-3: #f6fcf6; /* 薄荷绿 */
+            --color-4: #fff9f0; /* 暖阳橘 */
+            --color-5: #f9f6ff; /* 薰衣草紫 */
+            --color-6: #fffdf0; /* 奶油黄 */
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -46,100 +46,91 @@
         }
         nav a:hover { color: var(--main-orange); }
 
-        /* --- 主容器：铺满全屏 --- */
+        /* --- 主容器：全屏铺满 --- */
         .main-wrapper {
-            min-height: calc(100vh - 70px); /* 减去导航栏高度 */
+            min-height: calc(100vh - 70px);
             display: flex;
             flex-direction: column;
-            padding: 40px;
+            padding: 30px 40px 40px;
         }
 
         .page-title {
             font-size: 3.5rem;
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             background: linear-gradient(to right, #ff7e5f, #feb47b, #ff9a44);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: bold;
         }
 
-        /* --- 全屏网格布局 --- */
+        /* --- 6方块矩阵布局 --- */
         .about-grid {
             flex-grow: 1;
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 三列布局 */
-            grid-auto-rows: 1fr; /* 每一行等高并填满空间 */
-            gap: 25px;
+            grid-template-columns: repeat(3, 1fr); /* 严格三列 */
+            grid-template-rows: repeat(2, 1fr);    /* 严格二行 */
+            gap: 20px;
             max-width: 1400px;
             margin: 0 auto;
             width: 100%;
         }
 
         .keyword-card {
-            padding: 40px;
-            border-radius: 12px;
+            padding: 30px;
+            border-radius: 15px;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: flex-start;
-            transition: all 0.4s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            align-items: center; /* 内容居中 */
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
             border: 1px solid rgba(0,0,0,0.05);
             opacity: 0;
-            animation: fadeInUp 1s forwards;
+            animation: fadeInUp 0.8s forwards;
         }
 
         .keyword-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.08);
-            border-color: var(--main-orange);
+            transform: scale(1.03);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            z-index: 10;
         }
 
         .keyword-card h3 {
-            font-size: 1rem;
-            color: #888;
-            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: #999;
+            margin-bottom: 15px;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
         }
 
         .keyword-card p {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             color: #111;
             line-height: 1.4;
         }
 
-        /* 各个方块的不同背景色 */
+        /* 方块颜色分配与动画延迟 */
         .card-1 { background-color: var(--color-1); animation-delay: 0.1s; }
         .card-2 { background-color: var(--color-2); animation-delay: 0.2s; }
         .card-3 { background-color: var(--color-3); animation-delay: 0.3s; }
-        .card-4 { background-color: var(--color-5); animation-delay: 0.4s; } /* Hobbies */
-        .card-5 { background-color: var(--color-4); animation-delay: 0.5s; } /* Current Status */
-        .card-6 { 
-            background-color: var(--color-6); 
-            animation-delay: 0.6s; 
-            grid-column: span 3; /* 梦想方块横跨整行，作为收尾 */
-            text-align: center;
-            align-items: center;
-        }
+        .card-4 { background-color: var(--color-4); animation-delay: 0.4s; }
+        .card-5 { background-color: var(--color-5); animation-delay: 0.5s; }
+        .card-6 { background-color: var(--color-6); animation-delay: 0.6s; }
 
-        /* --- 动画 --- */
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         /* 响应式调整 */
         @media (max-width: 1024px) {
-            .about-grid { grid-template-columns: repeat(2, 1fr); }
-            .card-6 { grid-column: span 2; }
+            .about-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 1fr); }
         }
 
         @media (max-width: 768px) {
-            .about-grid { grid-template-columns: 1fr; }
-            .card-6 { grid-column: span 1; }
-            .main-wrapper { padding: 20px; }
+            .about-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
             .page-title { font-size: 2.5rem; }
         }
     </style>
@@ -160,31 +151,31 @@
         <div class="about-grid">
             <div class="keyword-card card-1">
                 <h3>Generation</h3>
-                <p>Born in 2000.</p>
+                <p>A "millennium baby" born in 2000.</p>
             </div>
 
             <div class="keyword-card card-2">
-                <h3>Personality</h3>
-                <p>A typical ENFP.</p>
+                <h3>MBTI</h3>
+                <p>A typical ENFP, a true Campaigner.</p>
             </div>
 
             <div class="keyword-card card-3">
                 <h3>Location</h3>
-                <p>Cambridge, UK.</p>
+                <p>Currently happily drifting in Cambridge, UK.</p>
             </div>
 
             <div class="keyword-card card-4">
                 <h3>Hobbies</h3>
-                <p>Painting, Singing & Traveling.</p>
+                <p>Painting, Singing & Traveling around the globe.</p>
             </div>
 
             <div class="keyword-card card-5">
-                <h3>Current Status</h3>
-                <p>Happily pursuing a PhD at the University of Cambridge.</p>
+                <h3>Music Soul</h3>
+                <p>Piano (Grade 10) & Flute (Grade 9).</p>
             </div>
 
             <div class="keyword-card card-6">
-                <h3>The Ultimate Dream</h3>
+                <h3>Ultimate Dream</h3>
                 <p>"To run a cozy, soulful café where every cup tells a story."</p>
             </div>
         </div>
