@@ -7,15 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* 统一全站的渐变色系 */
-            --gradient-start: #ff7e5f;
-            --gradient-mid: #feb47b;
-            --gradient-end: #ff9a44;
             --gradient-main: linear-gradient(to right, #ff7e5f, #feb47b, #ff9a44);
-            
             --bg-color: #f9f9f9;
-            --text-gray: #666;
-            --title-black: #111;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -24,10 +17,10 @@
             font-family: 'Special Elite', serif; 
             background-color: var(--bg-color); 
             color: #333;
-            overflow-x: hidden;
+            overflow: hidden; /* 防止拖拽出界导致滚动条 */
         }
 
-        /* --- 1. 导航栏 (全站统一) --- */
+        /* --- 1. 导航栏 --- */
         nav {
             background: #111; padding: 20px 0; display: flex;
             justify-content: space-around; position: fixed;
@@ -41,110 +34,66 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            padding: 80px 10% 0; /* 预留顶部导航空间 */
-            gap: 60px; /* 增大左右间距 */
-        }
-
-        /* --- 左侧：图片叠加区域 (保持原逻辑) --- */
-        .image-stack {
+            padding: 80px 10% 0;
+            gap: 60px;
+            z-index: 5;
             position: relative;
-            flex: 1;
-            max-width: 500px;
-            height: 600px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
+        /* --- 2. 左侧图片叠加 (保持原逻辑) --- */
+        .image-stack {
+            position: relative; flex: 1; max-width: 500px; height: 600px;
+            display: flex; align-items: center; justify-content: center;
+        }
         .layer {
-            position: absolute;
-            width: 100%;
-            height: auto;
-            max-height: 100%;
-            object-fit: contain;
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            opacity: 0;
-            transform: scale(0.95) translateY(10px);
+            position: absolute; width: 100%; height: auto; max-height: 100%;
+            object-fit: contain; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0; transform: scale(0.95) translateY(10px);
         }
-
         .layer-base { opacity: 1; transform: scale(1) translateY(0); z-index: 1; }
         .layer.active { opacity: 1; transform: scale(1) translateY(0); z-index: 2; }
 
-        /* --- 右侧：文字与交互图标 --- */
+        /* --- 3. 右侧交互列表 --- */
         .content-panel {
-            flex: 1;
-            max-width: 550px; /* 略微加宽 */
-            height: 70%; /* 限制文字区高度 */
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between; /* --- 修改核心：让内容在垂直方向均匀分布，更分散 --- */
+            flex: 1; max-width: 550px; height: 70%;
+            display: flex; flex-direction: column; justify-content: space-between;
         }
-
         .intro-title {
-            font-size: 3.5rem;
-            line-height: 1.1;
-            padding-bottom: 20px;
-            /* --- 修改：标题应用渐变色 --- */
-            background: var(--gradient-main);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
+            font-size: 3.5rem; background: var(--gradient-main);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-
-        .tick-item {
-            display: flex;
-            align-items: flex-start;
-            cursor: pointer;
-            transition: all 0.3s;
-            padding: 20px; /* 增大内边距 */
-            border-radius: 12px;
-            /* 增大项目间距，使整体更充实 */
-            margin-bottom: 20px;
-        }
-
-        .tick-item:hover { background: rgba(255, 154, 68, 0.08); }
-
-        /* --- 图标容器 --- */
-        .icon-wrapper {
-            width: 45px;
-            height: 45px;
-            margin-right: 25px;
-            flex-shrink: 0;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* 默认 SVG：灰色 */
-        .icon-default {
-            display: block;
-            width: 36px; height: 36px;
-            transition: 0.3s;
-        }
-        .icon-default path { stroke: #bbb; } /* 初始灰色 */
-
-        /* 激活 SVG：隐藏 */
-        .icon-active {
-            display: none;
-            width: 36px; height: 36px;
-        }
-
-        /* --- 核心修改：交互后图标应用与标题一致的渐变 --- */
+        .tick-item { display: flex; align-items: flex-start; cursor: pointer; transition: 0.3s; padding: 20px; }
+        .tick-item:hover { background: rgba(255, 154, 68, 0.08); border-radius: 12px; }
+        .icon-wrapper { width: 45px; height: 45px; margin-right: 25px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+        .icon-default { width: 36px; height: 36px; transition: 0.3s; }
+        .icon-default path { stroke: #bbb; }
+        .icon-active { display: none; width: 36px; height: 36px; }
         .tick-item.active .icon-default { display: none; }
         .tick-item.active .icon-active { display: block; }
-        .tick-item.active .icon-wrapper { transform: scale(1.1); }
+        .tick-text h3 { font-size: 1.6rem; margin-bottom: 8px; color: #111; }
+        .tick-item.active .tick-text h3 { color: #ff9a44; }
 
-        .tick-text h3 { font-size: 1.6rem; margin-bottom: 8px; color: var(--title-black); transition: 0.3s; }
-        .tick-item.active .tick-text h3 { color: var(--gradient-end); } /* 激活时标题颜色微调 */
-        .tick-text p { font-size: 1rem; color: var(--text-gray); line-height: 1.5; }
+        /* --- 4. 可拖拽插图样式 --- */
+        .sticker {
+            position: absolute;
+            cursor: grab;
+            z-index: 10; /* 在主体内容之上，导航栏之下 */
+            user-select: none;
+            transition: transform 0.2s ease;
+        }
+        .sticker:active { cursor: grabbing; transform: scale(1.1); }
+        .sticker img { width: 100%; height: auto; pointer-events: none; } /* 禁止图片本身的默认拖拽 */
 
-        /* 响应式 */
+        /* 初始尺寸微调 */
+        #sticker-rocket { width: 80px; top: 120px; left: 5%; }
+        #sticker-bird { width: 100px; top: 150px; right: 8%; }
+        #sticker-flower { width: 120px; bottom: 100px; left: 8%; }
+        #sticker-map { width: 150px; bottom: 80px; right: 5%; }
+        #sticker-drink { width: 70px; top: 50%; left: 45%; }
+
         @media (max-width: 1024px) {
-            .about-container { flex-direction: column; text-align: center; height: auto; padding-bottom: 50px; }
-            .image-stack { height: 400px; width: 100%; margin-bottom: 40px;}
-            .content-panel { height: auto; justify-content: flex-start;}
-            .tick-item { text-align: left; }
+            .about-container { flex-direction: column; text-align: center; height: auto; padding-bottom: 100px; }
+            .sticker { display: none; } /* 移动端为了防止遮挡，建议隐藏或缩小 */
         }
     </style>
 </head>
@@ -157,12 +106,18 @@
         <a href="life.html">Life</a>
     </nav>
 
+    <div class="sticker" id="sticker-rocket" style="left: 5%; top: 120px;"><img src="images/rocket.avif"></div>
+    <div class="sticker" id="sticker-bird" style="right: 8%; top: 150px;"><img src="images/bird.avif"></div>
+    <div class="sticker" id="sticker-flower" style="left: 8%; bottom: 100px;"><img src="images/flower.avif"></div>
+    <div class="sticker" id="sticker-map" style="right: 5%; bottom: 80px;"><img src="images/map.avif"></div>
+    <div class="sticker" id="sticker-drink" style="left: 45%; top: 55%;"><img src="images/drink.avif"></div>
+
     <div class="about-container">
         <div class="image-stack">
-            <img src="images/me-base.png" class="layer layer-base" alt="Xiaoqi Base">
-            <img src="images/layer-birthday.png" class="layer" id="img-birthday" alt="Birthday Decor">
-            <img src="images/layer-mbti.png" class="layer" id="img-mbti" alt="ENFP Vibes">
-            <img src="images/layer-dream.png" class="layer" id="img-dream" alt="Cafe Elements">
+            <img src="images/me-base.png" class="layer layer-base" alt="Base">
+            <img src="images/layer-birthday.png" class="layer" id="img-birthday" alt="Birthday">
+            <img src="images/layer-mbti.png" class="layer" id="img-mbti" alt="MBTI">
+            <img src="images/layer-dream.png" class="layer" id="img-dream" alt="Dream">
         </div>
 
         <div class="content-panel">
@@ -170,43 +125,18 @@
 
             <div class="tick-item" onclick="toggleLayer('birthday', this)">
                 <div class="icon-wrapper">
-                    <svg class="icon-default" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g clip-path="url(#clip0_3261_13790)"><path d="M20.86 17.42L19.77 17.67C18.99 17.85 18.37 18.46 18.19 19.25L17.94 20.34C17.92 20.45 17.74 20.45 17.72 20.34L17.47 19.25C17.29 18.47 16.68 17.85 15.89 17.67L14.8 17.42C14.69 17.4 14.69 17.22 14.8 17.2L15.89 16.95C16.67 16.77 17.29 16.16 17.47 15.37L17.72 14.28C17.74 14.17 17.92 14.17 17.94 14.28L18.19 15.37C18.37 16.15 18.98 16.77 19.77 16.95L20.86 17.2C20.97 17.22 20.97 17.4 20.86 17.42Z" stroke-width="1.5" stroke-miterlimit="10"/><path d="M6.75997 21.5C8.84997 21.5 10.55 19.8 10.55 17.71C10.55 15.62 8.84997 13.92 6.75997 13.92C4.66997 13.92 2.96997 15.62 2.96997 17.71C2.96997 19.8 4.66997 21.5 6.75997 21.5Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.55 10.61L18.2 7.64003C19.13 7.28003 19.9 6.16003 19.9 5.16003C19.9 3.29003 18.02 2.00003 16.28 2.68003L12.59 4.11003C11.36 4.59003 10.56 5.77003 10.56 7.08003V10.61H10.55Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.55 8V17.71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g><defs><clipPath id="clip0_3261_13790"><rect width="24" height="24" fill="white"/></clipPath></defs>
-                    </svg>
-                    <svg class="icon-active" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="iconGradientBirth" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" style="stop-color:var(--gradient-start);stop-opacity:1" />
-                                <stop offset="50%" style="stop-color:var(--gradient-mid);stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:var(--gradient-end);stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                        <g clip-path="url(#clip0_3261_12990)">
-                        <path d="M9.90999 6.62001C9.90999 6.62001 9.90999 6.59001 9.91999 6.57001C10.13 5.26001 11.04 4.12001 12.31 3.62001L15.91 2.23001C16.93 1.83001 18.09 1.97001 18.99 2.59001C19.9 3.20001 20.44 4.24001 20.44 5.33001C20.44 6.61001 19.5 7.97001 18.31 8.43001L11.63 11.02C11.46 11.09 11.32 11.29 11.32 11.47V17.56C11.32 20.31 8.78999 22.49 5.92999 21.89C4.25999 21.54 2.89999 20.19 2.54999 18.51C1.94999 15.65 4.12999 13.12 6.87999 13.12C8.02999 13.12 9.06999 13.55 9.85999 14.27V7.20001L9.90999 6.62001Z" fill="url(#iconGradientBirth)"/><path d="M21.17 16.98C21.17 17.05 21.13 17.21 20.94 17.27L19.96 17.54C19.11 17.77 18.47 18.41 18.24 19.26L17.98 20.22C17.92 20.44 17.75 20.46 17.67 20.46C17.59 20.46 17.42 20.44 17.36 20.22L17.1 19.25C16.87 18.41 16.22 17.77 15.38 17.54L14.41 17.28C14.2 17.22 14.18 17.04 14.18 16.97C14.18 16.89 14.2 16.71 14.41 16.65L15.39 16.39C16.23 16.15 16.87 15.51 17.1 14.67L17.36 13.72L17.38 13.65C17.45 13.48 17.61 13.45 17.67 13.45C17.73 13.45 17.9 13.47 17.96 13.63L18.24 14.66C18.47 15.5 19.12 16.14 19.96 16.38L20.93 16.64L20.96 16.66C21.16 16.74 21.17 16.92 21.17 16.98Z" fill="url(#iconGradientBirth)"/></g><defs><clipPath id="clip0_3261_12990"><rect width="24" height="24" fill="white"/></clipPath></defs>
-                    </svg>
+                    <svg class="icon-default" viewBox="0 0 24 24" fill="none"><g clip-path="url(#clip0_3261_13790)"><path d="M20.86 17.42L19.77 17.67C18.99 17.85 18.37 18.46 18.19 19.25L17.94 20.34C17.92 20.45 17.74 20.45 17.72 20.34L17.47 19.25C17.29 18.47 16.68 17.85 15.89 17.67L14.8 17.42C14.69 17.4 14.69 17.22 14.8 17.2L15.89 16.95C16.67 16.77 17.29 16.16 17.47 15.37L17.72 14.28C17.74 14.17 17.92 14.17 17.94 14.28L18.19 15.37C18.37 16.15 18.98 16.77 19.77 16.95L20.86 17.2C20.97 17.22 20.97 17.4 20.86 17.42Z" stroke-width="1.5" stroke-miterlimit="10"/><path d="M6.75997 21.5C8.84997 21.5 10.55 19.8 10.55 17.71C10.55 15.62 8.84997 13.92 6.75997 13.92C4.66997 13.92 2.96997 15.62 2.96997 17.71C2.96997 19.8 4.66997 21.5 6.75997 21.5Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.55 10.61L18.2 7.64003C19.13 7.28003 19.9 6.16003 19.9 5.16003C19.9 3.29003 18.02 2.00003 16.28 2.68003L12.59 4.11003C11.36 4.59003 10.56 5.77003 10.56 7.08003V10.61H10.55Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.55 8V17.71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g></svg>
+                    <svg class="icon-active" viewBox="0 0 24 24"><defs><linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#ff7e5f;"/><stop offset="100%" style="stop-color:#ff9a44;"/></linearGradient></defs><path d="M9.91 6.62C9.91 6.62 9.91 6.59 9.92 6.57C10.13 5.26 11.04 4.12 12.31 3.62L15.91 2.23C16.93 1.83 18.09 1.97 18.99 2.59C19.9 3.2 20.44 4.24 20.44 5.33C20.44 6.61 19.5 7.97 18.31 8.43L11.63 11.02C11.46 11.09 11.32 11.29 11.32 11.47V17.56C11.32 20.31 8.79 22.49 5.93 21.89C4.26 21.54 2.9 20.19 2.55 18.51C1.95 15.65 4.13 13.12 6.88 13.12C8.03 13.12 9.07 13.55 9.86 14.27V7.2L9.91 6.62Z" fill="url(#grad1)"/><path d="M21.17 16.98C21.17 17.05 21.13 17.21 20.94 17.27L19.96 17.54C19.11 17.77 18.47 18.41 18.24 19.26L17.98 20.22C17.92 20.44 17.75 20.46 17.67 20.46C17.59 20.46 17.42 20.44 17.36 20.22L17.1 19.25C16.87 18.41 16.22 17.77 15.38 17.54L14.41 17.28C14.2 17.22 14.18 17.04 14.18 16.97C14.18 16.89 14.2 16.71 14.41 16.65L15.39 16.39C16.23 16.15 16.87 15.51 17.1 14.67L17.36 13.72L17.96 13.63L18.24 14.66C18.47 15.5 19.12 16.14 19.96 16.38L20.93 16.64C21.16 16.74 21.17 16.92 21.17 16.98Z" fill="url(#grad1)"/></svg>
                 </div>
                 <div class="tick-text">
                     <h3>Birthday</h3>
-                    <p>Born in 2000—a millennium baby. Exploring the world with curiosity.</p>
+                    <p>Born in 2000. Exploring the world with curiosity.</p>
                 </div>
             </div>
 
             <div class="tick-item" onclick="toggleLayer('mbti', this)">
                 <div class="icon-wrapper">
-                    <svg class="icon-default" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g clip-path="url(#clip0_3261_13790)"><path d="M20.86 17.42L19.77 17.67C18.99 17.85 18.37 18.46 18.19 19.25L17.94 20.34C17.92 20.45 17.74 20.45 17.72 20.34L17.47 19.25C17.29 18.47 16.68 17.85 15.89 17.67L14.8 17.42C14.69 17.4 14.69 17.22 14.8 17.2L15.89 16.95C16.67 16.77 17.29 16.16 17.47 15.37L17.72 14.28C17.74 14.17 17.92 14.17 17.94 14.28L18.19 15.37C18.37 16.15 18.98 16.77 19.77 16.95L20.86 17.2C20.97 17.22 20.97 17.4 20.86 17.42Z" stroke-width="1.5" stroke-miterlimit="10"/><path d="M6.75997 21.5C8.84997 21.5 10.55 19.8 10.55 17.71C10.55 15.62 8.84997 13.92 6.75997 13.92C4.66997 13.92 2.96997 15.62 2.96997 17.71C2.96997 19.8 4.66997 21.5 6.75997 21.5Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.55 10.61L18.2 7.64003C19.13 7.28003 19.9 6.16003 19.9 5.16003C19.9 3.29003 18.02 2.00003 16.28 2.68003L12.59 4.11003C11.36 4.59003 10.56 5.77003 10.56 7.08003V10.61H10.55Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.55 8V17.71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g><defs><clipPath id="clip0_3261_13790"><rect width="24" height="24" fill="white"/></clipPath></defs>
-                    </svg>
-                    <svg class="icon-active" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="iconGradientMBTI" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" style="stop-color:var(--gradient-start);stop-opacity:1" />
-                                <stop offset="50%" style="stop-color:var(--gradient-mid);stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:var(--gradient-end);stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                        <g clip-path="url(#clip0_3261_12990)"><path d="M9.90999 6.62001C9.90999 6.62001 9.90999 6.59001 9.91999 6.57001C10.13 5.26001 11.04 4.12001 12.31 3.62001L15.91 2.23001C16.93 1.83001 18.09 1.97001 18.99 2.59001C19.9 3.20001 20.44 4.24001 20.44 5.33001C20.44 6.61001 19.5 7.97001 18.31 8.43001L11.63 11.02C11.46 11.09 11.32 11.29 11.32 11.47V17.56C11.32 20.31 8.78999 22.49 5.92999 21.89C4.25999 21.54 2.89999 20.19 2.54999 18.51C1.94999 15.65 4.12999 13.12 6.87999 13.12C8.02999 13.12 9.06999 13.55 9.85999 14.27V7.20001L9.90999 6.62001Z" fill="url(#iconGradientMBTI)"/><path d="M21.17 16.98C21.17 17.05 21.13 17.21 20.94 17.27L19.96 17.54C19.11 17.77 18.47 18.41 18.24 19.26L17.98 20.22C17.92 20.44 17.75 20.46 17.67 20.46C17.59 20.46 17.42 20.44 17.36 20.22L17.1 19.25C16.87 18.41 16.22 17.77 15.38 17.54L14.41 17.28C14.2 17.22 14.18 17.04 14.18 16.97C14.18 16.89 14.2 16.71 14.41 16.65L15.39 16.39C16.23 16.15 16.87 15.51 17.1 14.67L17.36 13.72L17.38 13.65C17.45 13.48 17.61 13.45 17.67 13.45C17.73 13.45 17.9 13.47 17.96 13.63L18.24 14.66C18.47 15.5 19.12 16.14 19.96 16.38L20.93 16.64L20.96 16.66C21.16 16.74 21.17 16.92 21.17 16.98Z" fill="url(#iconGradientMBTI)"/></g><defs><clipPath id="clip0_3261_12990"><rect width="24" height="24" fill="white"/></clipPath></defs>
-                    </svg>
-                </div>
+                    </div>
                 <div class="tick-text">
                     <h3>MBTI: ENFP</h3>
                     <p>The Campaigner. Creative and enthusiastic.</p>
@@ -215,38 +145,67 @@
 
             <div class="tick-item" onclick="toggleLayer('dream', this)">
                 <div class="icon-wrapper">
-                    <svg class="icon-default" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g clip-path="url(#clip0_3261_13790)"><path d="M20.86 17.42L19.77 17.67C18.99 17.85 18.37 18.46 18.19 19.25L17.94 20.34C17.92 20.45 17.74 20.45 17.72 20.34L17.47 19.25C17.29 18.47 16.68 17.85 15.89 17.67L14.8 17.42C14.69 17.4 14.69 17.22 14.8 17.2L15.89 16.95C16.67 16.77 17.29 16.16 17.47 15.37L17.72 14.28C17.74 14.17 17.92 14.17 17.94 14.28L18.19 15.37C18.37 16.15 18.98 16.77 19.77 16.95L20.86 17.2C20.97 17.22 20.97 17.4 20.86 17.42Z" stroke-width="1.5" stroke-miterlimit="10"/><path d="M6.75997 21.5C8.84997 21.5 10.55 19.8 10.55 17.71C10.55 15.62 8.84997 13.92 6.75997 13.92C4.66997 13.92 2.96997 15.62 2.96997 17.71C2.96997 19.8 4.66997 21.5 6.75997 21.5Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.55 10.61L18.2 7.64003C19.13 7.28003 19.9 6.16003 19.9 5.16003C19.9 3.29003 18.02 2.00003 16.28 2.68003L12.59 4.11003C11.36 4.59003 10.56 5.77003 10.56 7.08003V10.61H10.55Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.55 8V17.71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g><defs><clipPath id="clip0_3261_13790"><rect width="24" height="24" fill="white"/></clipPath></defs>
-                    </svg>
-                    <svg class="icon-active" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="iconGradientDream" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" style="stop-color:var(--gradient-start);stop-opacity:1" />
-                                <stop offset="50%" style="stop-color:var(--gradient-mid);stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:var(--gradient-end);stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                        <g clip-path="url(#clip0_3261_12990)"><path d="M9.90999 6.62001C9.90999 6.62001 9.90999 6.59001 9.91999 6.57001C10.13 5.26001 11.04 4.12001 12.31 3.62001L15.91 2.23001C16.93 1.83001 18.09 1.97001 18.99 2.59001C19.9 3.20001 20.44 4.24001 20.44 5.33001C20.44 6.61001 19.5 7.97001 18.31 8.43001L11.63 11.02C11.46 11.09 11.32 11.29 11.32 11.47V17.56C11.32 20.31 8.78999 22.49 5.92999 21.89C4.25999 21.54 2.89999 20.19 2.54999 18.51C1.94999 15.65 4.12999 13.12 6.87999 13.12C8.02999 13.12 9.06999 13.55 9.85999 14.27V7.20001L9.90999 6.62001Z" fill="url(#iconGradientDream)"/><path d="M21.17 16.98C21.17 17.05 21.13 17.21 20.94 17.27L19.96 17.54C19.11 17.77 18.47 18.41 18.24 19.26L17.98 20.22C17.92 20.44 17.75 20.46 17.67 20.46C17.59 20.46 17.42 20.44 17.36 20.22L17.1 19.25C16.87 18.41 16.22 17.77 15.38 17.54L14.41 17.28C14.2 17.22 14.18 17.04 14.18 16.97C14.18 16.89 14.2 16.71 14.41 16.65L15.39 16.39C16.23 16.15 16.87 15.51 17.1 14.67L17.36 13.72L17.38 13.65C17.45 13.48 17.61 13.45 17.67 13.45C17.73 13.45 17.9 13.47 17.96 13.63L18.24 14.66C18.47 15.5 19.12 16.14 19.96 16.38L20.93 16.64L20.96 16.66C21.16 16.74 21.17 16.92 21.17 16.98Z" fill="url(#iconGradientDream)"/></g><defs><clipPath id="clip0_3261_12990"><rect width="24" height="24" fill="white"/></clipPath></defs>
-                    </svg>
-                </div>
+                    </div>
                 <div class="tick-text">
                     <h3>The Dream</h3>
-                    <p>Open a cozy café and enjoy life.</p>
+                    <p>Opening a cozy café with a flute playing in the background.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        // --- 1. 图层切换 ---
         function toggleLayer(layerId, element) {
-            // 切换激活类
             element.classList.toggle('active');
-            
-            // 切换图片图层
             const imgLayer = document.getElementById('img-' + layerId);
-            if (imgLayer) {
-                imgLayer.classList.toggle('active');
-            }
+            if (imgLayer) imgLayer.classList.toggle('active');
+        }
+
+        // --- 2. 自由拖拽逻辑 ---
+        const stickers = document.querySelectorAll('.sticker');
+        let activeSticker = null;
+        let startX, startY, initialLeft, initialTop;
+
+        stickers.forEach(sticker => {
+            sticker.addEventListener('mousedown', startDragging);
+            sticker.addEventListener('touchstart', startDragging, { passive: false });
+        });
+
+        function startDragging(e) {
+            activeSticker = this;
+            const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+
+            startX = clientX;
+            startY = clientY;
+            initialLeft = activeSticker.offsetLeft;
+            initialTop = activeSticker.offsetTop;
+
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('touchmove', drag, { passive: false });
+            document.addEventListener('mouseup', stopDragging);
+            document.addEventListener('touchend', stopDragging);
+        }
+
+        function drag(e) {
+            if (!activeSticker) return;
+            e.preventDefault();
+
+            const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+
+            const dx = clientX - startX;
+            const dy = clientY - startY;
+
+            activeSticker.style.left = initialLeft + dx + 'px';
+            activeSticker.style.top = initialTop + dy + 'px';
+        }
+
+        function stopDragging() {
+            activeSticker = null;
+            document.removeEventListener('mousemove', drag);
+            document.removeEventListener('touchmove', drag);
         }
     </script>
 </body>
