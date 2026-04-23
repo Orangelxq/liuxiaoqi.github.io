@@ -60,17 +60,10 @@
             transform: scale(0.95) translateY(10px);
         }
 
-        /* 基础图层永远显示 */
         .layer-base { opacity: 1; transform: scale(1) translateY(0); z-index: 1; }
+        .layer.active { opacity: 1; transform: scale(1) translateY(0); z-index: 2; }
 
-        /* 激活状态 */
-        .layer.active {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-            z-index: 2;
-        }
-
-        /* --- 右侧：文字与打钩框 --- */
+        /* --- 右侧：文字与图标列表 --- */
         .content-panel {
             flex: 1;
             max-width: 500px;
@@ -91,42 +84,44 @@
             cursor: pointer;
             transition: 0.3s;
             padding: 15px;
-            border-radius: 8px;
+            border-radius: 12px;
         }
 
-        .tick-item:hover { background: rgba(255, 154, 68, 0.05); }
+        .tick-item:hover { background: rgba(255, 154, 68, 0.08); }
 
-        /* 自定义 Tickle Box */
-        .tick-box {
-            width: 30px;
-            height: 30px;
-            border: 2px solid #ddd;
+        /* --- 自定义图标容器 --- */
+        .icon-wrapper {
+            width: 40px;
+            height: 40px;
             margin-right: 20px;
-            position: relative;
             flex-shrink: 0;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 统一处理图标颜色：点击前为深灰色，点击后为橙色 */
+        .icon-wrapper svg {
+            width: 32px;
+            height: 32px;
             transition: 0.3s;
-            background: white;
         }
 
-        .tick-item.active .tick-box {
-            border-color: var(--main-orange);
-            background: var(--main-orange);
-        }
+        /* 默认状态图标路径颜色 (Stroke) */
+        .icon-default path { stroke: #999; } 
+        /* 激活状态图标路径颜色 (Fill) */
+        .icon-active path { fill: var(--main-orange); }
 
-        /* 打钩的 X 形状 */
-        .tick-box::after {
-            content: 'X';
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 1.2rem;
-            display: none;
-        }
+        /* 显隐逻辑 */
+        .icon-active { display: none; }
+        
+        .tick-item.active .icon-default { display: none; }
+        .tick-item.active .icon-active { display: block; }
+        .tick-item.active .icon-wrapper { transform: scale(1.1); }
 
-        .tick-item.active .tick-box::after { display: block; }
-
-        .tick-text h3 { font-size: 1.5rem; margin-bottom: 5px; color: #111; }
+        .tick-text h3 { font-size: 1.5rem; margin-bottom: 5px; color: #111; transition: 0.3s; }
+        .tick-item.active .tick-text h3 { color: var(--main-orange); }
         .tick-text p { font-size: 1rem; color: #666; line-height: 1.4; }
 
         /* 响应式 */
@@ -150,36 +145,80 @@
     <div class="about-container">
         <div class="image-stack">
             <img src="images/me-base.png" class="layer layer-base" alt="Xiaoqi Base">
-            
-            <img src="images/layer-birthday.png" class="layer" id="img-birthday" alt="Birthday Decor">
-            <img src="images/layer-mbti.png" class="layer" id="img-mbti" alt="ENFP Vibes">
-            <img src="images/layer-dream.png" class="layer" id="img-dream" alt="Cafe Elements">
+            <img src="images/layer-birthday.png" class="layer" id="img-birthday" alt="Birthday Layer">
+            <img src="images/layer-mbti.png" class="layer" id="img-mbti" alt="MBTI Layer">
+            <img src="images/layer-dream.png" class="layer" id="img-dream" alt="Dream Layer">
         </div>
 
         <div class="content-panel">
-            <h1 class="intro-text intro-title">Who is Xiaoqi?</h1>
+            <h1 class="intro-title">Who is Xiaoqi?</h1>
 
             <div class="tick-item" onclick="toggleLayer('birthday', this)">
-                <div class="tick-box"></div>
+                <div class="icon-wrapper">
+                    <svg class="icon-default" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_3261_13790)">
+                        <path d="M20.86 17.42L19.77 17.67C18.99 17.85 18.37 18.46 18.19 19.25L17.94 20.34C17.92 20.45 17.74 20.45 17.72 20.34L17.47 19.25C17.29 18.47 16.68 17.85 15.89 17.67L14.8 17.42C14.69 17.4 14.69 17.22 14.8 17.2L15.89 16.95C16.67 16.77 17.29 16.16 17.47 15.37L17.72 14.28C17.74 14.17 17.92 14.17 17.94 14.28L18.19 15.37C18.37 16.15 18.98 16.77 19.77 16.95L20.86 17.2C20.97 17.22 20.97 17.4 20.86 17.42Z" stroke-width="1.5" stroke-miterlimit="10" />
+                        <path d="M6.75997 21.5C8.84997 21.5 10.55 19.8 10.55 17.71C10.55 15.62 8.84997 13.92 6.75997 13.92C4.66997 13.92 2.96997 15.62 2.96997 17.71C2.96997 19.8 4.66997 21.5 6.75997 21.5Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M10.55 10.61L18.2 7.64003C19.13 7.28003 19.9 6.16003 19.9 5.16003C19.9 3.29003 18.02 2.00003 16.28 2.68003L12.59 4.11003C11.36 4.59003 10.56 5.77003 10.56 7.08003V10.61H10.55Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M10.55 8V17.71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </g>
+                    </svg>
+                    <svg class="icon-active" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_3261_12990)">
+                        <path d="M9.90999 6.62001C9.90999 6.62001 9.90999 6.59001 9.91999 6.57001C10.13 5.26001 11.04 4.12001 12.31 3.62001L15.91 2.23001C16.93 1.83001 18.09 1.97001 18.99 2.59001C19.9 3.20001 20.44 4.24001 20.44 5.33001C20.44 6.61001 19.5 7.97001 18.31 8.43001L11.63 11.02C11.46 11.09 11.32 11.29 11.32 11.47V17.56C11.32 20.31 8.78999 22.49 5.92999 21.89C4.25999 21.54 2.89999 20.19 2.54999 18.51C1.94999 15.65 4.12999 13.12 6.87999 13.12C8.02999 13.12 9.06999 13.55 9.85999 14.27V7.20001L9.90999 6.62001Z" />
+                        <path d="M21.17 16.98C21.17 17.05 21.13 17.21 20.94 17.27L19.96 17.54C19.11 17.77 18.47 18.41 18.24 19.26L17.98 20.22C17.92 20.44 17.75 20.46 17.67 20.46C17.59 20.46 17.42 20.44 17.36 20.22L17.1 19.25C16.87 18.41 16.22 17.77 15.38 17.54L14.41 17.28C14.2 17.22 14.18 17.04 14.18 16.97C14.18 16.89 14.2 16.71 14.41 16.65L15.39 16.39C16.23 16.15 16.87 15.51 17.1 14.67L17.36 13.72L17.38 13.65C17.45 13.48 17.61 13.45 17.67 13.45C17.73 13.45 17.9 13.47 17.96 13.63L18.24 14.66C18.47 15.5 19.12 16.14 19.96 16.38L20.93 16.64L20.96 16.66C21.16 16.74 21.17 16.92 21.17 16.98Z" />
+                        </g>
+                    </svg>
+                </div>
                 <div class="tick-text">
                     <h3>Birthday</h3>
-                    <p>Born in 2000—a millennium baby. Growing up with the digital age while keeping a soul for the old times.</p>
+                    <p>Born in 2000. Exploring the world with curiosity.</p>
                 </div>
             </div>
 
             <div class="tick-item" onclick="toggleLayer('mbti', this)">
-                <div class="tick-box"></div>
+                <div class="icon-wrapper">
+                    <svg class="icon-default" viewBox="0 0 24 24" fill="none">
+                        <g clip-path="url(#clip0_3261_13790)">
+                        <path d="M20.86 17.42L19.77 17.67C18.99 17.85 18.37 18.46 18.19 19.25L17.94 20.34C17.92 20.45 17.74 20.45 17.72 20.34L17.47 19.25C17.29 18.47 16.68 17.85 15.89 17.67L14.8 17.42C14.69 17.4 14.69 17.22 14.8 17.2L15.89 16.95C16.67 16.77 17.29 16.16 17.47 15.37L17.72 14.28C17.74 14.17 17.92 14.17 17.94 14.28L18.19 15.37C18.37 16.15 18.98 16.77 19.77 16.95L20.86 17.2C20.97 17.22 20.97 17.4 20.86 17.42Z" stroke-width="1.5" stroke-miterlimit="10" />
+                        <path d="M6.75997 21.5C8.84997 21.5 10.55 19.8 10.55 17.71C10.55 15.62 8.84997 13.92 6.75997 13.92C4.66997 13.92 2.96997 15.62 2.96997 17.71C2.96997 19.8 4.66997 21.5 6.75997 21.5Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M10.55 10.61L18.2 7.64003C19.13 7.28003 19.9 6.16003 19.9 5.16003C19.9 3.29003 18.02 2.00003 16.28 2.68003L12.59 4.11003C11.36 4.59003 10.56 5.77003 10.56 7.08003V10.61H10.55Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M10.55 8V17.71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </g>
+                    </svg>
+                    <svg class="icon-active" viewBox="0 0 24 24" fill="none">
+                        <g clip-path="url(#clip0_3261_12990)">
+                        <path d="M9.90999 6.62001C9.90999 6.62001 9.90999 6.59001 9.91999 6.57001C10.13 5.26001 11.04 4.12001 12.31 3.62001L15.91 2.23001C16.93 1.83001 18.09 1.97001 18.99 2.59001C19.9 3.20001 20.44 4.24001 20.44 5.33001C20.44 6.61001 19.5 7.97001 18.31 8.43001L11.63 11.02C11.46 11.09 11.32 11.29 11.32 11.47V17.56C11.32 20.31 8.78999 22.49 5.92999 21.89C4.25999 21.54 2.89999 20.19 2.54999 18.51C1.94999 15.65 4.12999 13.12 6.87999 13.12C8.02999 13.12 9.06999 13.55 9.85999 14.27V7.20001L9.90999 6.62001Z" />
+                        <path d="M21.17 16.98C21.17 17.05 21.13 17.21 20.94 17.27L19.96 17.54C19.11 17.77 18.47 18.41 18.24 19.26L17.98 20.22C17.92 20.44 17.75 20.46 17.67 20.46C17.59 20.46 17.42 20.44 17.36 20.22L17.1 19.25C16.87 18.41 16.22 17.77 15.38 17.54L14.41 17.28C14.2 17.22 14.18 17.04 14.18 16.97C14.18 16.89 14.2 16.71 14.41 16.65L15.39 16.39C16.23 16.15 16.87 15.51 17.1 14.67L17.36 13.72L17.38 13.65C17.45 13.48 17.61 13.45 17.67 13.45C17.73 13.45 17.9 13.47 17.96 13.63L18.24 14.66C18.47 15.5 19.12 16.14 19.96 16.38L20.93 16.64L20.96 16.66C21.16 16.74 21.17 16.92 21.17 16.98Z" />
+                        </g>
+                    </svg>
+                </div>
                 <div class="tick-text">
                     <h3>MBTI: ENFP</h3>
-                    <p>The Campaigner. Enthusiastic, creative, and always looking for the hidden meaning in everything.</p>
+                    <p>The Campaigner. Creative and enthusiastic.</p>
                 </div>
             </div>
 
             <div class="tick-item" onclick="toggleLayer('dream', this)">
-                <div class="tick-box"></div>
+                <div class="icon-wrapper">
+                    <svg class="icon-default" viewBox="0 0 24 24" fill="none">
+                        <g clip-path="url(#clip0_3261_13790)">
+                        <path d="M20.86 17.42L19.77 17.67C18.99 17.85 18.37 18.46 18.19 19.25L17.94 20.34C17.92 20.45 17.74 20.45 17.72 20.34L17.47 19.25C17.29 18.47 16.68 17.85 15.89 17.67L14.8 17.42C14.69 17.4 14.69 17.22 14.8 17.2L15.89 16.95C16.67 16.77 17.29 16.16 17.47 15.37L17.72 14.28C17.74 14.17 17.92 14.17 17.94 14.28L18.19 15.37C18.37 16.15 18.98 16.77 19.77 16.95L20.86 17.2C20.97 17.22 20.97 17.4 20.86 17.42Z" stroke-width="1.5" stroke-miterlimit="10" />
+                        <path d="M6.75997 21.5C8.84997 21.5 10.55 19.8 10.55 17.71C10.55 15.62 8.84997 13.92 6.75997 13.92C4.66997 13.92 2.96997 15.62 2.96997 17.71C2.96997 19.8 4.66997 21.5 6.75997 21.5Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M10.55 10.61L18.2 7.64003C19.13 7.28003 19.9 6.16003 19.9 5.16003C19.9 3.29003 18.02 2.00003 16.28 2.68003L12.59 4.11003C11.36 4.59003 10.56 5.77003 10.56 7.08003V10.61H10.55Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M10.55 8V17.71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </g>
+                    </svg>
+                    <svg class="icon-active" viewBox="0 0 24 24" fill="none">
+                        <g clip-path="url(#clip0_3261_12990)">
+                        <path d="M9.90999 6.62001C9.90999 6.62001 9.90999 6.59001 9.91999 6.57001C10.13 5.26001 11.04 4.12001 12.31 3.62001L15.91 2.23001C16.93 1.83001 18.09 1.97001 18.99 2.59001C19.9 3.20001 20.44 4.24001 20.44 5.33001C20.44 6.61001 19.5 7.97001 18.31 8.43001L11.63 11.02C11.46 11.09 11.32 11.29 11.32 11.47V17.56C11.32 20.31 8.78999 22.49 5.92999 21.89C4.25999 21.54 2.89999 20.19 2.54999 18.51C1.94999 15.65 4.12999 13.12 6.87999 13.12C8.02999 13.12 9.06999 13.55 9.85999 14.27V7.20001L9.90999 6.62001Z" />
+                        <path d="M21.17 16.98C21.17 17.05 21.13 17.21 20.94 17.27L19.96 17.54C19.11 17.77 18.47 18.41 18.24 19.26L17.98 20.22C17.92 20.44 17.75 20.46 17.67 20.46C17.59 20.46 17.42 20.44 17.36 20.22L17.1 19.25C16.87 18.41 16.22 17.77 15.38 17.54L14.41 17.28C14.2 17.22 14.18 17.04 14.18 16.97C14.18 16.89 14.2 16.71 14.41 16.65L15.39 16.39C16.23 16.15 16.87 15.51 17.1 14.67L17.36 13.72L17.38 13.65C17.45 13.48 17.61 13.45 17.67 13.45C17.73 13.45 17.9 13.47 17.96 13.63L18.24 14.66C18.47 15.5 19.12 16.14 19.96 16.38L20.93 16.64L20.96 16.66C21.16 16.74 21.17 16.92 21.17 16.98Z" />
+                        </g>
+                    </svg>
+                </div>
                 <div class="tick-text">
                     <h3>The Dream</h3>
-                    <p>Currently a PhD at Cambridge, but my ultimate retirement goal? Opening a cozy café filled with books and flute music.</p>
+                    <p>Open a cozy café and enjoy life.</p>
                 </div>
             </div>
         </div>
@@ -187,10 +226,7 @@
 
     <script>
         function toggleLayer(layerId, element) {
-            // 切换右侧选项状态
             element.classList.toggle('active');
-            
-            // 切换左侧图片显隐
             const imgLayer = document.getElementById('img-' + layerId);
             if (imgLayer) {
                 imgLayer.classList.toggle('active');
