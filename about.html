@@ -7,6 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
     <style>
         :root {
+            --gradient-start: #ff7e5f;
+            --gradient-mid: #feb47b;
+            --gradient-end: #ff9a44;
             --gradient-main: linear-gradient(to right, #ff7e5f, #feb47b, #ff9a44);
             --bg-color: #f9f9f9;
         }
@@ -17,10 +20,10 @@
             font-family: 'Special Elite', serif; 
             background-color: var(--bg-color); 
             color: #333;
-            overflow: hidden; /* 防止拖拽出界导致滚动条 */
+            overflow: hidden; 
         }
 
-        /* --- 1. 导航栏 --- */
+        /* --- 导航栏 --- */
         nav {
             background: #111; padding: 20px 0; display: flex;
             justify-content: space-around; position: fixed;
@@ -30,17 +33,11 @@
         nav a:hover { color: #ff9a44; }
 
         .about-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            padding: 80px 10% 0;
-            gap: 60px;
-            z-index: 5;
-            position: relative;
+            display: flex; align-items: center; justify-content: center;
+            height: 100vh; padding: 80px 10% 0; gap: 60px; z-index: 5; position: relative;
         }
 
-        /* --- 2. 左侧图片叠加 (保持原逻辑) --- */
+        /* --- 左侧图片堆叠 --- */
         .image-stack {
             position: relative; flex: 1; max-width: 500px; height: 600px;
             display: flex; align-items: center; justify-content: center;
@@ -53,47 +50,54 @@
         .layer-base { opacity: 1; transform: scale(1) translateY(0); z-index: 1; }
         .layer.active { opacity: 1; transform: scale(1) translateY(0); z-index: 2; }
 
-        /* --- 3. 右侧交互列表 --- */
+        /* --- 右侧交互面板 --- */
         .content-panel {
-            flex: 1; max-width: 550px; height: 70%;
+            flex: 1; max-width: 550px; height: 75%;
             display: flex; flex-direction: column; justify-content: space-between;
         }
         .intro-title {
             font-size: 3.5rem; background: var(--gradient-main);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
         }
-        .tick-item { display: flex; align-items: flex-start; cursor: pointer; transition: 0.3s; padding: 20px; }
-        .tick-item:hover { background: rgba(255, 154, 68, 0.08); border-radius: 12px; }
-        .icon-wrapper { width: 45px; height: 45px; margin-right: 25px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-        .icon-default { width: 36px; height: 36px; transition: 0.3s; }
+
+        .tick-item {
+            display: flex; align-items: flex-start; cursor: pointer;
+            transition: all 0.3s; padding: 20px; border-radius: 12px;
+        }
+        .tick-item:hover { background: rgba(255, 154, 68, 0.08); }
+
+        .icon-wrapper {
+            width: 45px; height: 45px; margin-right: 25px; flex-shrink: 0;
+            position: relative; display: flex; align-items: center; justify-content: center;
+        }
+
+        .icon-default { width: 36px; height: 36px; display: block; transition: 0.3s; }
         .icon-default path { stroke: #bbb; }
-        .icon-active { display: none; width: 36px; height: 36px; }
+        .icon-active { width: 36px; height: 36px; display: none; }
+
         .tick-item.active .icon-default { display: none; }
         .tick-item.active .icon-active { display: block; }
-        .tick-text h3 { font-size: 1.6rem; margin-bottom: 8px; color: #111; }
-        .tick-item.active .tick-text h3 { color: #ff9a44; }
+        .tick-item.active .tick-text h3 { color: var(--gradient-end); }
 
-        /* --- 4. 可拖拽插图样式 --- */
-        .sticker {
-            position: absolute;
-            cursor: grab;
-            z-index: 10; /* 在主体内容之上，导航栏之下 */
-            user-select: none;
-            transition: transform 0.2s ease;
-        }
+        .tick-text h3 { font-size: 1.6rem; margin-bottom: 8px; color: #111; transition: 0.3s; }
+        .tick-text p { font-size: 1rem; color: #666; line-height: 1.5; }
+
+        /* --- 可拖拽贴纸 --- */
+        .sticker { position: absolute; cursor: grab; z-index: 10; user-select: none; transition: transform 0.2s; }
         .sticker:active { cursor: grabbing; transform: scale(1.1); }
-        .sticker img { width: 100%; height: auto; pointer-events: none; } /* 禁止图片本身的默认拖拽 */
+        .sticker img { width: 100%; height: auto; pointer-events: none; }
 
-        /* 初始尺寸微调 */
         #sticker-rocket { width: 80px; top: 120px; left: 5%; }
         #sticker-bird { width: 100px; top: 150px; right: 8%; }
         #sticker-flower { width: 120px; bottom: 100px; left: 8%; }
         #sticker-map { width: 150px; bottom: 80px; right: 5%; }
-        #sticker-drink { width: 70px; top: 50%; left: 45%; }
+        #sticker-drink { width: 70px; top: 55%; left: 45%; }
 
         @media (max-width: 1024px) {
-            .about-container { flex-direction: column; text-align: center; height: auto; padding-bottom: 100px; }
-            .sticker { display: none; } /* 移动端为了防止遮挡，建议隐藏或缩小 */
+            .about-container { flex-direction: column; text-align: center; height: auto; padding-bottom: 50px; }
+            .sticker { display: none; }
+            .content-panel { height: auto; }
         }
     </style>
 </head>
@@ -106,18 +110,18 @@
         <a href="life.html">Life</a>
     </nav>
 
-    <div class="sticker" id="sticker-rocket" style="left: 5%; top: 120px;"><img src="images/rocket.avif"></div>
-    <div class="sticker" id="sticker-bird" style="right: 8%; top: 150px;"><img src="images/bird.avif"></div>
-    <div class="sticker" id="sticker-flower" style="left: 8%; bottom: 100px;"><img src="images/flower.avif"></div>
-    <div class="sticker" id="sticker-map" style="right: 5%; bottom: 80px;"><img src="images/map.avif"></div>
-    <div class="sticker" id="sticker-drink" style="left: 45%; top: 55%;"><img src="images/drink.avif"></div>
+    <div class="sticker" id="sticker-rocket"><img src="images/rocket.avif"></div>
+    <div class="sticker" id="sticker-bird"><img src="images/bird.avif"></div>
+    <div class="sticker" id="sticker-flower"><img src="images/flower.avif"></div>
+    <div class="sticker" id="sticker-map"><img src="images/map.avif"></div>
+    <div class="sticker" id="sticker-drink"><img src="images/drink.avif"></div>
 
     <div class="about-container">
         <div class="image-stack">
-            <img src="images/me-base.png" class="layer layer-base" alt="Base">
-            <img src="images/layer-birthday.png" class="layer" id="img-birthday" alt="Birthday">
-            <img src="images/layer-mbti.png" class="layer" id="img-mbti" alt="MBTI">
-            <img src="images/layer-dream.png" class="layer" id="img-dream" alt="Dream">
+            <img src="images/me-base.png" class="layer layer-base">
+            <img src="images/layer-birthday.png" class="layer" id="img-birthday">
+            <img src="images/layer-mbti.png" class="layer" id="img-mbti">
+            <img src="images/layer-dream.png" class="layer" id="img-dream">
         </div>
 
         <div class="content-panel">
@@ -125,44 +129,46 @@
 
             <div class="tick-item" onclick="toggleLayer('birthday', this)">
                 <div class="icon-wrapper">
-                    <svg class="icon-default" viewBox="0 0 24 24" fill="none"><g clip-path="url(#clip0_3261_13790)"><path d="M20.86 17.42L19.77 17.67C18.99 17.85 18.37 18.46 18.19 19.25L17.94 20.34C17.92 20.45 17.74 20.45 17.72 20.34L17.47 19.25C17.29 18.47 16.68 17.85 15.89 17.67L14.8 17.42C14.69 17.4 14.69 17.22 14.8 17.2L15.89 16.95C16.67 16.77 17.29 16.16 17.47 15.37L17.72 14.28C17.74 14.17 17.92 14.17 17.94 14.28L18.19 15.37C18.37 16.15 18.98 16.77 19.77 16.95L20.86 17.2C20.97 17.22 20.97 17.4 20.86 17.42Z" stroke-width="1.5" stroke-miterlimit="10"/><path d="M6.75997 21.5C8.84997 21.5 10.55 19.8 10.55 17.71C10.55 15.62 8.84997 13.92 6.75997 13.92C4.66997 13.92 2.96997 15.62 2.96997 17.71C2.96997 19.8 4.66997 21.5 6.75997 21.5Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.55 10.61L18.2 7.64003C19.13 7.28003 19.9 6.16003 19.9 5.16003C19.9 3.29003 18.02 2.00003 16.28 2.68003L12.59 4.11003C11.36 4.59003 10.56 5.77003 10.56 7.08003V10.61H10.55Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.55 8V17.71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g></svg>
-                    <svg class="icon-active" viewBox="0 0 24 24"><defs><linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#ff7e5f;"/><stop offset="100%" style="stop-color:#ff9a44;"/></linearGradient></defs><path d="M9.91 6.62C9.91 6.62 9.91 6.59 9.92 6.57C10.13 5.26 11.04 4.12 12.31 3.62L15.91 2.23C16.93 1.83 18.09 1.97 18.99 2.59C19.9 3.2 20.44 4.24 20.44 5.33C20.44 6.61 19.5 7.97 18.31 8.43L11.63 11.02C11.46 11.09 11.32 11.29 11.32 11.47V17.56C11.32 20.31 8.79 22.49 5.93 21.89C4.26 21.54 2.9 20.19 2.55 18.51C1.95 15.65 4.13 13.12 6.88 13.12C8.03 13.12 9.07 13.55 9.86 14.27V7.2L9.91 6.62Z" fill="url(#grad1)"/><path d="M21.17 16.98C21.17 17.05 21.13 17.21 20.94 17.27L19.96 17.54C19.11 17.77 18.47 18.41 18.24 19.26L17.98 20.22C17.92 20.44 17.75 20.46 17.67 20.46C17.59 20.46 17.42 20.44 17.36 20.22L17.1 19.25C16.87 18.41 16.22 17.77 15.38 17.54L14.41 17.28C14.2 17.22 14.18 17.04 14.18 16.97C14.18 16.89 14.2 16.71 14.41 16.65L15.39 16.39C16.23 16.15 16.87 15.51 17.1 14.67L17.36 13.72L17.96 13.63L18.24 14.66C18.47 15.5 19.12 16.14 19.96 16.38L20.93 16.64C21.16 16.74 21.17 16.92 21.17 16.98Z" fill="url(#grad1)"/></svg>
+                    <svg class="icon-default" viewBox="0 0 24 24" fill="none"><g clip-path="url(#c1)"><path d="M20.86 17.42L19.77 17.67C18.99 17.85 18.37 18.46 18.19 19.25L17.94 20.34C17.92 20.45 17.74 20.45 17.72 20.34L17.47 19.25C17.29 18.47 16.68 17.85 15.89 17.67L14.8 17.42C14.69 17.4 14.69 17.22 14.8 17.2L15.89 16.95C16.67 16.77 17.29 16.16 17.47 15.37L17.72 14.28C17.74 14.17 17.92 14.17 17.94 14.28L18.19 15.37C18.37 16.15 18.98 16.77 19.77 16.95L20.86 17.2C20.97 17.22 20.97 17.4 20.86 17.42Z" stroke-width="1.5" stroke-miterlimit="10"/><path d="M6.76 21.5C8.85 21.5 10.55 19.8 10.55 17.71C10.55 15.62 8.85 13.92 6.76 13.92C4.67 13.92 2.97 15.62 2.97 17.71C2.97 19.8 4.67 21.5 6.76 21.5Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.55 10.61L18.2 7.64C19.13 7.28 19.9 6.16 19.9 5.16C19.9 3.29 18.02 2 16.28 2.68L12.59 4.11C11.36 4.59 10.56 5.77 10.56 7.08V10.61H10.55Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.55 8V17.71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g><defs><clipPath id="c1"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
+                    <svg class="icon-active" viewBox="0 0 24 24"><defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:var(--gradient-start)"/><stop offset="100%" style="stop-color:var(--gradient-end)"/></linearGradient></defs><path d="M9.91 6.62C9.91 6.62 9.91 6.59 9.92 6.57C10.13 5.26 11.04 4.12 12.31 3.62L15.91 2.23C16.93 1.83 18.09 1.97 18.99 2.59C19.9 3.2 20.44 4.24 20.44 5.33C20.44 6.61 19.5 7.97 18.31 8.43L11.63 11.02C11.46 11.09 11.32 11.29 11.32 11.47V17.56C11.32 20.31 8.79 22.49 5.93 21.89C4.26 21.54 2.9 20.19 2.55 18.51C1.95 15.65 4.13 13.12 6.88 13.12C8.03 13.12 9.07 13.55 9.86 14.27V7.2L9.91 6.62Z" fill="url(#g1)"/><path d="M21.17 16.98C21.17 17.05 21.13 17.21 20.94 17.27L19.96 17.54C19.11 17.77 18.47 18.41 18.24 19.26L17.98 20.22C17.92 20.44 17.75 20.46 17.67 20.46C17.59 20.46 17.42 20.44 17.36 20.22L17.1 19.25C16.87 18.41 16.22 17.77 15.38 17.54L14.41 17.28C14.2 17.22 14.18 17.04 14.18 16.97C14.18 16.89 14.2 16.71 14.41 16.65L15.39 16.39C16.23 16.15 16.87 15.51 17.1 14.67L17.36 13.72L17.96 13.63L18.24 14.66C18.47 15.5 19.12 16.14 19.96 16.38L20.93 16.64C21.16 16.74 21.17 16.92 21.17 16.98Z" fill="url(#g1)"/></svg>
                 </div>
                 <div class="tick-text">
                     <h3>Birthday</h3>
-                    <p>Born in 2000. Exploring the world with curiosity.</p>
+                    <p>Born in 2000. Millenium baby, digital soul.</p>
                 </div>
             </div>
 
             <div class="tick-item" onclick="toggleLayer('mbti', this)">
                 <div class="icon-wrapper">
-                    </div>
+                    <svg class="icon-default" viewBox="0 0 24 24" fill="none"><g clip-path="url(#c2)"><path d="M20.86 17.42L19.77 17.67C18.99 17.85 18.37 18.46 18.19 19.25L17.94 20.34C17.92 20.45 17.74 20.45 17.72 20.34L17.47 19.25C17.29 18.47 16.68 17.85 15.89 17.67L14.8 17.42C14.69 17.4 14.69 17.22 14.8 17.2L15.89 16.95C16.67 16.77 17.29 16.16 17.47 15.37L17.72 14.28C17.74 14.17 17.92 14.17 17.94 14.28L18.19 15.37C18.37 16.15 18.98 16.77 19.77 16.95L20.86 17.2C20.97 17.22 20.97 17.4 20.86 17.42Z" stroke-width="1.5" stroke-miterlimit="10"/><path d="M6.76 21.5C8.85 21.5 10.55 19.8 10.55 17.71C10.55 15.62 8.85 13.92 6.76 13.92C4.67 13.92 2.97 15.62 2.97 17.71C2.97 19.8 4.67 21.5 6.76 21.5Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.55 10.61L18.2 7.64C19.13 7.28 19.9 6.16 19.9 5.16C19.9 3.29 18.02 2 16.28 2.68L12.59 4.11C11.36 4.59 10.56 5.77 10.56 7.08V10.61H10.55Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.55 8V17.71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g><defs><clipPath id="c2"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
+                    <svg class="icon-active" viewBox="0 0 24 24"><defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:var(--gradient-start)"/><stop offset="100%" style="stop-color:var(--gradient-end)"/></linearGradient></defs><path d="M9.91 6.62C9.91 6.62 9.91 6.59 9.92 6.57C10.13 5.26 11.04 4.12 12.31 3.62L15.91 2.23C16.93 1.83 18.09 1.97 18.99 2.59C19.9 3.2 20.44 4.24 20.44 5.33C20.44 6.61 19.5 7.97 18.31 8.43L11.63 11.02C11.46 11.09 11.32 11.29 11.32 11.47V17.56C11.32 20.31 8.79 22.49 5.93 21.89C4.26 21.54 2.9 20.19 2.55 18.51C1.95 15.65 4.13 13.12 6.88 13.12C8.03 13.12 9.07 13.55 9.86 14.27V7.2L9.91 6.62Z" fill="url(#g2)"/><path d="M21.17 16.98C21.17 17.05 21.13 17.21 20.94 17.27L19.96 17.54C19.11 17.77 18.47 18.41 18.24 19.26L17.98 20.22C17.92 20.44 17.75 20.46 17.67 20.46C17.59 20.46 17.42 20.44 17.36 20.22L17.1 19.25C16.87 18.41 16.22 17.77 15.38 17.54L14.41 17.28C14.2 17.22 14.18 17.04 14.18 16.97C14.18 16.89 14.2 16.71 14.41 16.65L15.39 16.39C16.23 16.15 16.87 15.51 17.1 14.67L17.36 13.72L17.96 13.63L18.24 14.66C18.47 15.5 19.12 16.14 19.96 16.38L20.93 16.64C21.16 16.74 21.17 16.92 21.17 16.98Z" fill="url(#g2)"/></svg>
+                </div>
                 <div class="tick-text">
                     <h3>MBTI: ENFP</h3>
-                    <p>The Campaigner. Creative and enthusiastic.</p>
+                    <p>The Campaigner. Creative, free-spirited enthusiast.</p>
                 </div>
             </div>
 
             <div class="tick-item" onclick="toggleLayer('dream', this)">
                 <div class="icon-wrapper">
-                    </div>
+                    <svg class="icon-default" viewBox="0 0 24 24" fill="none"><g clip-path="url(#c3)"><path d="M20.86 17.42L19.77 17.67C18.99 17.85 18.37 18.46 18.19 19.25L17.94 20.34C17.92 20.45 17.74 20.45 17.72 20.34L17.47 19.25C17.29 18.47 16.68 17.85 15.89 17.67L14.8 17.42C14.69 17.4 14.69 17.22 14.8 17.2L15.89 16.95C16.67 16.77 17.29 16.16 17.47 15.37L17.72 14.28C17.74 14.17 17.92 14.17 17.94 14.28L18.19 15.37C18.37 16.15 18.98 16.77 19.77 16.95L20.86 17.2C20.97 17.22 20.97 17.4 20.86 17.42Z" stroke-width="1.5" stroke-miterlimit="10"/><path d="M6.76 21.5C8.85 21.5 10.55 19.8 10.55 17.71C10.55 15.62 8.85 13.92 6.76 13.92C4.67 13.92 2.97 15.62 2.97 17.71C2.97 19.8 4.67 21.5 6.76 21.5Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.55 10.61L18.2 7.64C19.13 7.28 19.9 6.16 19.9 5.16C19.9 3.29 18.02 2 16.28 2.68L12.59 4.11C11.36 4.59 10.56 5.77 10.56 7.08V10.61H10.55Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.55 8V17.71" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></g><defs><clipPath id="c3"><rect width="24" height="24" fill="white"/></clipPath></defs></svg>
+                    <svg class="icon-active" viewBox="0 0 24 24"><defs><linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:var(--gradient-start)"/><stop offset="100%" style="stop-color:var(--gradient-end)"/></linearGradient></defs><path d="M9.91 6.62C9.91 6.62 9.91 6.59 9.92 6.57C10.13 5.26 11.04 4.12 12.31 3.62L15.91 2.23C16.93 1.83 18.09 1.97 18.99 2.59C19.9 3.2 20.44 4.24 20.44 5.33C20.44 6.61 19.5 7.97 18.31 8.43L11.63 11.02C11.46 11.09 11.32 11.29 11.32 11.47V17.56C11.32 20.31 8.79 22.49 5.93 21.89C4.26 21.54 2.9 20.19 2.55 18.51C1.95 15.65 4.13 13.12 6.88 13.12C8.03 13.12 9.07 13.55 9.86 14.27V7.2L9.91 6.62Z" fill="url(#g3)"/><path d="M21.17 16.98C21.17 17.05 21.13 17.21 20.94 17.27L19.96 17.54C19.11 17.77 18.47 18.41 18.24 19.26L17.98 20.22C17.92 20.44 17.75 20.46 17.67 20.46C17.59 20.46 17.42 20.44 17.36 20.22L17.1 19.25C16.87 18.41 16.22 17.77 15.38 17.54L14.41 17.28C14.2 17.22 14.18 17.04 14.18 16.97C14.18 16.89 14.2 16.71 14.41 16.65L15.39 16.39C16.23 16.15 16.87 15.51 17.1 14.67L17.36 13.72L17.96 13.63L18.24 14.66C18.47 15.5 19.12 16.14 19.96 16.38L20.93 16.64C21.16 16.74 21.17 16.92 21.17 16.98Z" fill="url(#g3)"/></svg>
+                </div>
                 <div class="tick-text">
                     <h3>The Dream</h3>
-                    <p>Opening a cozy café with a flute playing in the background.</p>
+                    <p>Owning a soulful café. Art, music, and quietness.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // --- 1. 图层切换 ---
         function toggleLayer(layerId, element) {
             element.classList.toggle('active');
             const imgLayer = document.getElementById('img-' + layerId);
             if (imgLayer) imgLayer.classList.toggle('active');
         }
 
-        // --- 2. 自由拖拽逻辑 ---
         const stickers = document.querySelectorAll('.sticker');
         let activeSticker = null;
         let startX, startY, initialLeft, initialTop;
@@ -176,12 +182,8 @@
             activeSticker = this;
             const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
             const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
-
-            startX = clientX;
-            startY = clientY;
-            initialLeft = activeSticker.offsetLeft;
-            initialTop = activeSticker.offsetTop;
-
+            startX = clientX; startY = clientY;
+            initialLeft = activeSticker.offsetLeft; initialTop = activeSticker.offsetTop;
             document.addEventListener('mousemove', drag);
             document.addEventListener('touchmove', drag, { passive: false });
             document.addEventListener('mouseup', stopDragging);
@@ -191,15 +193,10 @@
         function drag(e) {
             if (!activeSticker) return;
             e.preventDefault();
-
             const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
             const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
-
-            const dx = clientX - startX;
-            const dy = clientY - startY;
-
-            activeSticker.style.left = initialLeft + dx + 'px';
-            activeSticker.style.top = initialTop + dy + 'px';
+            activeSticker.style.left = initialLeft + (clientX - startX) + 'px';
+            activeSticker.style.top = initialTop + (clientY - startY) + 'px';
         }
 
         function stopDragging() {
