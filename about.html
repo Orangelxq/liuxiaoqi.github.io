@@ -20,7 +20,7 @@
             font-family: 'Special Elite', serif; 
             background-color: var(--bg-color); 
             color: #333;
-            overflow: hidden; 
+            overflow: hidden; /* 防止拖拽出界导致滚动条 */
         }
 
         /* --- 导航栏 --- */
@@ -34,10 +34,10 @@
 
         .about-container {
             display: flex; align-items: center; justify-content: center;
-            height: 100vh; padding: 80px 10% 0; gap: 60px; z-index: 5; position: relative;
+            height: 100vh; padding: 80px 8% 0; gap: 60px; z-index: 5; position: relative;
         }
 
-        /* --- 左侧图片堆叠 --- */
+        /* --- 左侧图片堆叠 (保持原逻辑) --- */
         .image-stack {
             position: relative; flex: 1; max-width: 500px; height: 600px;
             display: flex; align-items: center; justify-content: center;
@@ -52,47 +52,54 @@
 
         /* --- 右侧交互面板 --- */
         .content-panel {
-            flex: 1; max-width: 550px; height: 75%;
-            display: flex; flex-direction: column; justify-content: space-between;
+            flex: 1; max-width: 600px; height: 70%; /* 限制文字区高度 */
+            display: flex; flex-direction: column; justify-content: space-between; /* 让内容在垂直方向均匀分布 */
         }
+        
+        /* 1. 标题放大 (3.5rem -> 4.5rem) */
         .intro-title {
-            font-size: 3.5rem; background: var(--gradient-main);
+            font-size: 4.5rem; 
+            background: var(--gradient-main);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
+            line-height: 1.1;
         }
 
         .tick-item {
             display: flex; align-items: flex-start; cursor: pointer;
-            transition: all 0.3s; padding: 20px; border-radius: 12px;
+            transition: all 0.3s; padding: 25px; border-radius: 12px;
         }
         .tick-item:hover { background: rgba(255, 154, 68, 0.08); }
 
+        /* 图标容器匹配放大 */
         .icon-wrapper {
-            width: 45px; height: 45px; margin-right: 25px; flex-shrink: 0;
+            width: 55px; height: 55px; margin-right: 30px; flex-shrink: 0;
             position: relative; display: flex; align-items: center; justify-content: center;
         }
 
-        .icon-default { width: 36px; height: 36px; display: block; transition: 0.3s; }
+        .icon-default { width: 45px; height: 45px; display: block; transition: 0.3s; }
         .icon-default path { stroke: #bbb; }
-        .icon-active { width: 36px; height: 36px; display: none; }
+        .icon-active { width: 45px; height: 45px; display: none; }
 
         .tick-item.active .icon-default { display: none; }
         .tick-item.active .icon-active { display: block; }
         .tick-item.active .tick-text h3 { color: var(--gradient-end); }
 
-        .tick-text h3 { font-size: 1.6rem; margin-bottom: 8px; color: #111; transition: 0.3s; }
-        .tick-text p { font-size: 1rem; color: #666; line-height: 1.5; }
+        /* 2. 项目标题放大 (1.6rem -> 2.0rem) */
+        .tick-text h3 { font-size: 2.0rem; margin-bottom: 10px; color: #111; transition: 0.3s; }
+        /* 3. 项目正文放大 (1.0rem -> 1.2rem) */
+        .tick-text p { font-size: 1.2rem; color: #666; line-height: 1.6; }
 
-        /* --- 可拖拽贴纸 --- */
+        /* --- 4. 可拖拽贴纸放大 (约1.5倍) --- */
         .sticker { position: absolute; cursor: grab; z-index: 10; user-select: none; transition: transform 0.2s; }
         .sticker:active { cursor: grabbing; transform: scale(1.1); }
         .sticker img { width: 100%; height: auto; pointer-events: none; }
 
-        #sticker-rocket { width: 80px; top: 120px; left: 5%; }
-        #sticker-bird { width: 100px; top: 150px; right: 8%; }
-        #sticker-flower { width: 120px; bottom: 100px; left: 8%; }
-        #sticker-map { width: 150px; bottom: 80px; right: 5%; }
-        #sticker-drink { width: 70px; top: 55%; left: 45%; }
+        #sticker-rocket { width: 120px; top: 120px; left: 5%; }
+        #sticker-bird { width: 150px; top: 150px; right: 8%; }
+        #sticker-flower { width: 180px; bottom: 100px; left: 8%; }
+        #sticker-map { width: 220px; bottom: 80px; right: 5%; }
+        #sticker-drink { width: 110px; top: 50%; left: 45%; }
 
         @media (max-width: 1024px) {
             .about-container { flex-direction: column; text-align: center; height: auto; padding-bottom: 50px; }
@@ -134,7 +141,7 @@
                 </div>
                 <div class="tick-text">
                     <h3>Birthday</h3>
-                    <p>Born in 2000. Millenium baby, digital soul.</p>
+                    <p>Born in 2000.<br>Millennium baby, digital soul.</p>
                 </div>
             </div>
 
@@ -145,7 +152,7 @@
                 </div>
                 <div class="tick-text">
                     <h3>MBTI: ENFP</h3>
-                    <p>The Campaigner. Creative, free-spirited enthusiast.</p>
+                    <p>The Campaigner.<br>Creative, free-spirited enthusiast.</p>
                 </div>
             </div>
 
@@ -156,19 +163,21 @@
                 </div>
                 <div class="tick-text">
                     <h3>The Dream</h3>
-                    <p>Owning a soulful café. Art, music, and quietness.</p>
+                    <p>Owning a soulful café.<br>Art, music, and quietness.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        // --- 1. 图层切换 (保持逻辑) ---
         function toggleLayer(layerId, element) {
             element.classList.toggle('active');
             const imgLayer = document.getElementById('img-' + layerId);
             if (imgLayer) imgLayer.classList.toggle('active');
         }
 
+        // --- 2. 自由拖拽逻辑 (保持逻辑) ---
         const stickers = document.querySelectorAll('.sticker');
         let activeSticker = null;
         let startX, startY, initialLeft, initialTop;
@@ -182,8 +191,12 @@
             activeSticker = this;
             const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
             const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
-            startX = clientX; startY = clientY;
-            initialLeft = activeSticker.offsetLeft; initialTop = activeSticker.offsetTop;
+
+            startX = clientX;
+            startY = clientY;
+            initialLeft = activeSticker.offsetLeft;
+            initialTop = activeSticker.offsetTop;
+
             document.addEventListener('mousemove', drag);
             document.addEventListener('touchmove', drag, { passive: false });
             document.addEventListener('mouseup', stopDragging);
@@ -193,10 +206,15 @@
         function drag(e) {
             if (!activeSticker) return;
             e.preventDefault();
+
             const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
             const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
-            activeSticker.style.left = initialLeft + (clientX - startX) + 'px';
-            activeSticker.style.top = initialTop + (clientY - startY) + 'px';
+
+            const dx = clientX - startX;
+            const dy = clientY - startY;
+
+            activeSticker.style.left = initialLeft + dx + 'px';
+            activeSticker.style.top = initialTop + dy + 'px';
         }
 
         function stopDragging() {
