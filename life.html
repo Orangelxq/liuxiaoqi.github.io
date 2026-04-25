@@ -22,7 +22,7 @@
             height: 100vh;
         }
 
-        /* --- 导航栏 --- */
+        /* --- 1. 导航栏 --- */
         nav {
             background: #111; padding: 20px 0; display: flex;
             justify-content: space-around; position: fixed;
@@ -31,7 +31,7 @@
         nav a { color: white; text-decoration: none; font-size: 1.2rem; transition: 0.3s; }
         nav a:hover { color: var(--main-orange); }
 
-        /* --- 页面标题 --- */
+        /* --- 2. 页面标题 --- */
         .life-header { margin-top: 100px; text-align: center; }
         .life-header h1 {
             font-size: 2.8rem; background: var(--gradient);
@@ -39,7 +39,7 @@
             letter-spacing: 2px;
         }
 
-        /* --- 内容区域容器 --- */
+        /* --- 3. 主展示区域 --- */
         .content-wrapper {
             height: calc(100vh - 420px); 
             margin-top: 40px;
@@ -52,7 +52,7 @@
         .content-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- 1. Explore (照片墙) --- */
+        /* --- 4. Explore (照片详情沉浸) --- */
         .explore-grid {
             display: flex; gap: 30px; overflow-x: auto; padding: 0 10%;
             scrollbar-width: none;
@@ -71,15 +71,14 @@
             font-size: 1.2rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
         }
 
-        /* --- Explore 沉浸式详情页 (核心修改) --- */
+        /* Explore 全屏详情页容器 */
         #explore-detail {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             z-index: 4000; display: none;
             background-size: cover; background-position: center;
             animation: zoomBg 0.8s forwards;
         }
-        @keyframes zoomBg { from { opacity: 0; transform: scale(1.1); } to { opacity: 1; transform: scale(1); } }
-
+        /* 右侧文字详情层 (磨砂玻璃) */
         .detail-overlay {
             position: absolute; right: 0; top: 0; width: 38%; height: 100%;
             background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px);
@@ -87,20 +86,15 @@
             justify-content: center; border-left: 1px solid rgba(0,0,0,0.05);
             animation: slideLeft 0.8s cubic-bezier(0.19, 1, 0.22, 1);
         }
+        @keyframes zoomBg { from { opacity: 0; transform: scale(1.1); } to { opacity: 1; transform: scale(1); } }
         @keyframes slideLeft { from { transform: translateX(100%); } to { transform: translateX(0); } }
-
-        .detail-title {
-            font-size: 3rem; margin-bottom: 30px; color: #111;
-            background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
+        
+        .detail-title { font-size: 3rem; margin-bottom: 30px; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .detail-text { font-size: 1.2rem; line-height: 2; color: #444; }
-        .close-detail {
-            position: absolute; top: 40px; left: 40px; font-size: 2.5rem;
-            cursor: pointer; color: #333; transition: 0.3s; z-index: 4100;
-        }
+        .close-detail { position: absolute; top: 40px; left: 40px; font-size: 2.5rem; cursor: pointer; color: #333; z-index: 4100; transition: 0.3s; }
         .close-detail:hover { color: var(--main-orange); transform: rotate(90deg); }
 
-        /* --- 2. Feel (拍立得) --- */
+        /* --- 5. Feel (拍立得视频) --- */
         .feel-grid { display: flex; justify-content: center; gap: 40px; }
         .polaroid {
             background: white; padding: 15px 15px 45px 15px;
@@ -108,9 +102,10 @@
             cursor: pointer; transition: 0.4s;
         }
         .polaroid:hover { transform: rotate(0) scale(1.05); }
-        .vid-thumb { width: 250px; height: 200px; background: #222; }
+        .vid-thumb { width: 250px; height: 200px; background: #222; position: relative; }
+        .vid-thumb::after { content: '▶'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 2rem; opacity: 0.7; }
 
-        /* --- 3. Log (折扇) --- */
+        /* --- 6. Log (折扇手风琴 - 严格保持上一版代码) --- */
         .fan-container { display: flex; width: 85%; height: 420px; margin: 0 auto; gap: 12px; }
         .fan-leaf {
             flex: 1; background: var(--paper-color); border: 1px solid #eee;
@@ -128,7 +123,7 @@
         .poem-title { font-size: 2rem; color: var(--main-orange); margin-bottom: 20px; }
         .poem-content { font-size: 1.1rem; line-height: 1.8; color: #555; white-space: pre-wrap; }
 
-        /* --- 4. 底部艺术菜单 (间距与折线) --- */
+        /* --- 7. 底部艺术菜单 (大间距 + 折线 + 錯落有致) --- */
         .bottom-nav-menu {
             position: fixed; bottom: 60px; left: 0; width: 100%;
             display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 100;
@@ -141,22 +136,27 @@
         }
         .menu-item:hover, .menu-item.active { color: #111; }
 
-        /* 折线装饰 SVG */
-        .polyline-deco {
-            width: 60px; height: 12px; opacity: 0; transition: 0.4s;
-        }
-        .menu-item:hover .polyline-deco, .menu-item.active .polyline-deco { opacity: 1; }
-        .polyline-deco path {
-            fill: none; stroke: var(--main-orange); stroke-width: 1.5;
-        }
+        /* Staggered Vertical Position (錯落有致) */
+        .menu-item:nth-child(2) { margin-top: 0; }
+        .menu-item:nth-child(3) { margin-top: 20px; }
+        .menu-item:nth-child(4) { margin-top: 10px; }
 
-        /* 视频全屏播放器 */
+        /* 折线装饰 SVG */
+        .polyline-deco { width: 60px; height: 12px; opacity: 0; transition: 0.4s; margin: 0 15px; }
+        .menu-item:hover .polyline-deco, .menu-item.active .polyline-deco { opacity: 1; }
+        .polyline-deco path { fill: none; stroke: var(--main-orange); stroke-width: 1.5; }
+
+        /* 用户提供的装饰图标 */
+        .provided-fan-deco { width: 50px; height: 50px; margin-bottom: -10px; }
+        .provided-fan-deco path { fill: none; stroke: var(--main-orange); stroke-width: 1.5; }
+
+        /* 视频 Modal */
         #video-lightbox {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.98); z-index: 5000; display: none;
             justify-content: center; align-items: center;
         }
-        #video-lightbox video { max-width: 85%; max-height: 80%; border: 2px solid white; }
+        #video-lightbox video { max-width: 85%; max-height: 80%; border: 2px solid white; outline: none; }
     </style>
 </head>
 <body>
@@ -174,17 +174,18 @@
     </div>
 
     <div class="content-wrapper">
+        
         <div id="explore" class="content-section active">
             <div class="explore-grid">
-                <div class="photo-card" onclick="openExploreDetail('images/rowing.jpg', 'Rowing on the Cam', 'The morning mist over the River Cam is where silence meets strength. In Cambridge, rowing is more than a sport; it is a rhythm of life, a dance with the water that clears the mind before the day of research begins.')">
+                <div class="photo-card" onclick="openExploreDetail('images/rowing.jpg', 'Rowing on the Cam', 'The morning mist over the River Cam is where silence meets strength. In Cambridge, rowing is more than a sport; it is a rhythm of life, a dance with the water.')">
                     <img src="images/rowing.jpg">
                     <div class="label">Rowing</div>
                 </div>
-                <div class="photo-card" onclick="openExploreDetail('images/skiing.jpg', 'Alps Adventure', 'Carving through the fresh powder in the Alps. There is a peculiar kind of freedom found at 3,000 meters—the world below looks small, and the only thing that matters is the wind against your face.')">
+                <div class="photo-card" onclick="openExploreDetail('images/skiing.jpg', 'Alps Adventure', 'Carving through the fresh powder in the Alps. There is a peculiar kind of freedom found at 3,000 meters high.')">
                     <img src="images/skiing.jpg">
                     <div class="label">Skiing</div>
                 </div>
-                <div class="photo-card" onclick="openExploreDetail('images/climbing.jpg', 'Reach Higher', 'Rock climbing is a conversation with gravity. Every grip and every step is a problem to be solved—not with a pen and paper, but with muscle and focus. It keeps me grounded.')">
+                <div class="photo-card" onclick="openExploreDetail('images/climbing.jpg', 'Reach Higher', 'Rock climbing is a conversation with gravity. It keeps me grounded, focused, and shows me that with patience, any summit is reachable.')">
                     <img src="images/climbing.jpg">
                     <div class="label">Climbing</div>
                 </div>
@@ -207,17 +208,24 @@
         <div id="log" class="content-section">
             <div class="fan-container">
                 <div class="fan-leaf expanded" onclick="expandLeaf(this)">
-                    <div class="leaf-vertical-title">Poem: Rain</div>
+                    <div class="leaf-vertical-title">Poem: Cambridge Rain</div>
                     <div class="leaf-inner">
                         <div class="poem-title">Cambridge Rain</div>
-                        <div class="poem-content">The mist hangs low over the Cam,<br>Where willows weep in silent prayer.</div>
+                        <div class="poem-content">The mist hangs low over the Cam,<br>Where willows weep in silent prayer.<br>A moment frozen, soft and calm,<br>In the cool, damp, academic air.</div>
                     </div>
                 </div>
                 <div class="fan-leaf" onclick="expandLeaf(this)">
-                    <div class="leaf-vertical-title">Poem: Strings</div>
+                    <div class="leaf-vertical-title">Poem: String & Wind</div>
                     <div class="leaf-inner">
-                        <div class="poem-title">Strings</div>
-                        <div class="poem-content">Between the frets and the fingertips,<br>A story vibrates through the wood.</div>
+                        <div class="poem-title">String & Wind</div>
+                        <div class="poem-content">Between the frets and the fingertips,<br>A story vibrates through the wood.<br>No words need cross the quiet lips,<br>The melody is understood.</div>
+                    </div>
+                </div>
+                <div class="fan-leaf" onclick="expandLeaf(this)">
+                    <div class="leaf-vertical-title">Poem: Midnight Coffee</div>
+                    <div class="leaf-inner">
+                        <div class="poem-title">Midnight Coffee</div>
+                        <div class="poem-content">Dark beans and a darker sky,<br>Tracing dreams before they fly.<br>The scent of hope in a ceramic cup,<br>Before the morning wakes us up.</div>
                     </div>
                 </div>
             </div>
@@ -233,17 +241,29 @@
     </div>
 
     <div class="bottom-nav-menu">
-        <div class="menu-item active" onclick="showSection('explore', this)">
+        <svg class="provided-fan-deco" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_3261_13733)">
+<path d="M19.83 15.6L18.69 15.86C17.87 16.05 17.23 16.69 17.04 17.51L16.77 18.65C16.74 18.77 16.57 18.77 16.54 18.65L16.28 17.51C16.09 16.69 15.45 16.05 14.63 15.86L13.49 15.59C13.37 15.56 13.37 15.39 13.49 15.36L14.63 15.1C15.45 14.91 16.09 14.27 16.28 13.45L16.55 12.31C16.58 12.19 16.75 12.19 16.78 12.31L17.04 13.45C17.23 14.27 17.87 14.91 18.69 15.1L19.83 15.37C19.95 15.4 19.95 15.57 19.83 15.37Z" stroke="var(--main-orange)" stroke-width="1.5" stroke-miterlimit="10" />
+<path d="M12.31 18.37L9.51002 19.77C3.75002 22.65 1.40002 20.29 4.28002 14.54L5.15002 12.81C5.37002 12.37 5.37002 11.64 5.15002 11.2L4.28002 9.45996C2.30532 5.51741 2.7941 3.1686 5.15002 3.00989M20.78 12.92C21.36 11.37 20.46 9.70996 18.07 8.50996L11.0507 5.00031" stroke="var(--main-orange)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+<path d="M5.44 12H10.84" stroke="var(--main-orange)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+</g>
+<defs>
+<clipPath id="clip0_3261_13733">
+<rect width="24" height="24" fill="white"/>
+</clipPath>
+</defs>
+</svg>
+        <div class="menu-item staggered" onclick="showSection('explore', this)">
             <svg class="polyline-deco" viewBox="0 0 60 12"><path d="M0,10 L10,2 L20,10 L30,2 L40,10 L50,2 L60,10" /></svg>
             explore the world
             <svg class="polyline-deco" viewBox="0 0 60 12"><path d="M0,10 L10,2 L20,10 L30,2 L40,10 L50,2 L60,10" /></svg>
         </div>
-        <div class="menu-item" onclick="showSection('feel', this)">
+        <div class="menu-item staggered" onclick="showSection('feel', this)">
             <svg class="polyline-deco" viewBox="0 0 60 12"><path d="M0,10 L10,2 L20,10 L30,2 L40,10 L50,2 L60,10" /></svg>
             feel the world
             <svg class="polyline-deco" viewBox="0 0 60 12"><path d="M0,10 L10,2 L20,10 L30,2 L40,10 L50,2 L60,10" /></svg>
         </div>
-        <div class="menu-item" onclick="showSection('log', this)">
+        <div class="menu-item staggered" onclick="showSection('log', this)">
             <svg class="polyline-deco" viewBox="0 0 60 12"><path d="M0,10 L10,2 L20,10 L30,2 L40,10 L50,2 L60,10" /></svg>
             log the world
             <svg class="polyline-deco" viewBox="0 0 60 12"><path d="M0,10 L10,2 L20,10 L30,2 L40,10 L50,2 L60,10" /></svg>
@@ -255,6 +275,7 @@
     </div>
 
     <script>
+        // 板块切换
         function showSection(id, btn) {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.menu-item').forEach(b => b.classList.remove('active'));
@@ -262,7 +283,7 @@
             btn.classList.add('active');
         }
 
-        // Explore 详情逻辑
+        // Explore 详情详情页逻辑
         function openExploreDetail(imgSrc, title, text) {
             const detailView = document.getElementById('explore-detail');
             detailView.style.backgroundImage = `url('${imgSrc}')`;
@@ -275,11 +296,13 @@
             document.getElementById('explore-detail').style.display = 'none';
         }
 
+        // 折扇展开逻辑
         function expandLeaf(leaf) {
             document.querySelectorAll('.fan-leaf').forEach(l => l.classList.remove('expanded'));
             leaf.classList.add('expanded');
         }
 
+        // 视频逻辑
         function openVideo(src) {
             const video = document.getElementById('main-video');
             document.getElementById('video-source').src = src;
