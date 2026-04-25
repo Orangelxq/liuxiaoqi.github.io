@@ -34,14 +34,14 @@
         /* --- 页面标题 --- */
         .life-header { margin-top: 100px; text-align: center; }
         .life-header h1 {
-            font-size: 3rem; background: var(--gradient);
+            font-size: 2.8rem; background: var(--gradient);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             letter-spacing: 2px;
         }
 
         /* --- 内容区域容器 --- */
         .content-wrapper {
-            height: calc(100vh - 400px); /* 给底部菜单留出充足空间 */
+            height: calc(100vh - 420px); 
             margin-top: 40px;
             display: flex;
             align-items: center;
@@ -52,126 +52,111 @@
         .content-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- 1. Explore (保持横向滚动) --- */
+        /* --- 1. Explore (照片墙) --- */
         .explore-grid {
-            display: flex; gap: 20px; overflow-x: auto; padding: 0 10%;
+            display: flex; gap: 30px; overflow-x: auto; padding: 0 10%;
             scrollbar-width: none;
         }
         .explore-grid::-webkit-scrollbar { display: none; }
         .photo-card {
-            min-width: 280px; height: 400px; border-radius: 10px;
+            min-width: 300px; height: 420px; border-radius: 12px;
             overflow: hidden; cursor: pointer; position: relative; flex-shrink: 0;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        .photo-card:hover { transform: translateY(-10px); }
         .photo-card img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-card .label {
+            position: absolute; bottom: 20px; left: 20px; color: white;
+            font-size: 1.2rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
 
-        /* --- 2. Feel (保持拍立得) --- */
-        .feel-grid { display: flex; justify-content: center; gap: 30px; }
+        /* --- Explore 沉浸式详情页 (核心修改) --- */
+        #explore-detail {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 4000; display: none;
+            background-size: cover; background-position: center;
+            animation: zoomBg 0.8s forwards;
+        }
+        @keyframes zoomBg { from { opacity: 0; transform: scale(1.1); } to { opacity: 1; transform: scale(1); } }
+
+        .detail-overlay {
+            position: absolute; right: 0; top: 0; width: 38%; height: 100%;
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px);
+            padding: 80px 50px; display: flex; flex-direction: column;
+            justify-content: center; border-left: 1px solid rgba(0,0,0,0.05);
+            animation: slideLeft 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        @keyframes slideLeft { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+        .detail-title {
+            font-size: 3rem; margin-bottom: 30px; color: #111;
+            background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .detail-text { font-size: 1.2rem; line-height: 2; color: #444; }
+        .close-detail {
+            position: absolute; top: 40px; left: 40px; font-size: 2.5rem;
+            cursor: pointer; color: #333; transition: 0.3s; z-index: 4100;
+        }
+        .close-detail:hover { color: var(--main-orange); transform: rotate(90deg); }
+
+        /* --- 2. Feel (拍立得) --- */
+        .feel-grid { display: flex; justify-content: center; gap: 40px; }
         .polaroid {
-            background: white; padding: 15px 15px 40px 15px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05); transform: rotate(-2deg);
-            cursor: pointer; transition: 0.3s;
+            background: white; padding: 15px 15px 45px 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.07); transform: rotate(-2deg);
+            cursor: pointer; transition: 0.4s;
         }
         .polaroid:hover { transform: rotate(0) scale(1.05); }
-        .vid-thumb { width: 220px; height: 180px; background: #eee; }
+        .vid-thumb { width: 250px; height: 200px; background: #222; }
 
-        /* --- 3. Log (折扇手风琴布局) --- */
-        .fan-container {
-            display: flex;
-            width: 90%;
-            height: 450px;
-            margin: 0 auto;
-            gap: 10px;
-        }
+        /* --- 3. Log (折扇) --- */
+        .fan-container { display: flex; width: 85%; height: 420px; margin: 0 auto; gap: 12px; }
         .fan-leaf {
-            flex: 1;
-            background: var(--paper-color);
-            border: 1px solid #eee;
-            border-radius: 8px;
-            overflow: hidden;
-            transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
-            cursor: pointer;
-            position: relative;
-            box-shadow: -5px 0 15px rgba(0,0,0,0.03);
+            flex: 1; background: var(--paper-color); border: 1px solid #eee;
+            border-radius: 10px; overflow: hidden; transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+            cursor: pointer; position: relative; box-shadow: -5px 0 15px rgba(0,0,0,0.03);
         }
-        /* 默认隐藏内容，只显示标题 */
-        .leaf-inner {
-            padding: 40px;
-            opacity: 0;
-            transition: opacity 0.5s;
-            white-space: nowrap;
-        }
+        .fan-leaf.expanded { flex: 6; background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .leaf-inner { padding: 40px; opacity: 0; transition: 0.5s; }
+        .fan-leaf.expanded .leaf-inner { opacity: 1; }
         .leaf-vertical-title {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(90deg);
-            font-size: 1.5rem;
-            color: #999;
-            white-space: nowrap;
-            transition: 0.3s;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(90deg);
+            font-size: 1.4rem; color: #aaa; white-space: nowrap; transition: 0.3s;
         }
-        /* 展开状态 */
-        .fan-leaf.expanded {
-            flex: 6;
-            background: #fff;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        .fan-leaf.expanded .leaf-inner {
-            opacity: 1;
-            white-space: normal;
-        }
-        .fan-leaf.expanded .leaf-vertical-title {
-            opacity: 0;
-        }
-
+        .fan-leaf.expanded .leaf-vertical-title { opacity: 0; }
         .poem-title { font-size: 2rem; color: var(--main-orange); margin-bottom: 20px; }
-        .poem-content { font-size: 1.2rem; line-height: 2; color: #555; }
+        .poem-content { font-size: 1.1rem; line-height: 1.8; color: #555; white-space: pre-wrap; }
 
-        /* --- 4. 底部艺术菜单 --- */
+        /* --- 4. 底部艺术菜单 (间距与折线) --- */
         .bottom-nav-menu {
-            position: fixed;
-            bottom: 50px;
-            left: 0;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            z-index: 100;
+            position: fixed; bottom: 60px; left: 0; width: 100%;
+            display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 100;
         }
         .menu-item {
-            font-size: 1.4rem;
-            color: #999;
-            cursor: pointer;
-            transition: 0.4s;
-            position: relative;
-            letter-spacing: 2px;
+            font-size: 1.3rem; color: #aaa; cursor: pointer;
+            transition: 0.4s; display: flex; align-items: center;
+            letter-spacing: 8px; /* 加大字间距 */
+            text-transform: lowercase;
         }
-        .menu-item::after {
-            content: '';
-            position: absolute;
-            bottom: -5px; left: 50%;
-            width: 0; height: 1px;
-            background: var(--main-orange);
-            transition: 0.3s;
+        .menu-item:hover, .menu-item.active { color: #111; }
+
+        /* 折线装饰 SVG */
+        .polyline-deco {
+            width: 60px; height: 12px; opacity: 0; transition: 0.4s;
         }
-        .menu-item:hover, .menu-item.active {
-            color: #111;
-            transform: translateY(-2px);
-        }
-        .menu-item.active::after {
-            width: 100%;
-            left: 0;
+        .menu-item:hover .polyline-deco, .menu-item.active .polyline-deco { opacity: 1; }
+        .polyline-deco path {
+            fill: none; stroke: var(--main-orange); stroke-width: 1.5;
         }
 
-        /* --- 全屏 Modal --- */
-        #lightbox, #video-lightbox {
+        /* 视频全屏播放器 */
+        #video-lightbox {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 3000; display: none;
+            background: rgba(0,0,0,0.98); z-index: 5000; display: none;
             justify-content: center; align-items: center;
         }
-        #lightbox img, #video-lightbox video { max-width: 90%; max-height: 85%; border: 2px solid white; }
+        #video-lightbox video { max-width: 85%; max-height: 80%; border: 2px solid white; }
     </style>
 </head>
 <body>
@@ -191,9 +176,18 @@
     <div class="content-wrapper">
         <div id="explore" class="content-section active">
             <div class="explore-grid">
-                <div class="photo-card" onclick="openLightbox('images/rowing.jpg')"><img src="images/rowing.jpg"></div>
-                <div class="photo-card" onclick="openLightbox('images/skiing.jpg')"><img src="images/skiing.jpg"></div>
-                <div class="photo-card" onclick="openLightbox('images/climbing.jpg')"><img src="images/climbing.jpg"></div>
+                <div class="photo-card" onclick="openExploreDetail('images/rowing.jpg', 'Rowing on the Cam', 'The morning mist over the River Cam is where silence meets strength. In Cambridge, rowing is more than a sport; it is a rhythm of life, a dance with the water that clears the mind before the day of research begins.')">
+                    <img src="images/rowing.jpg">
+                    <div class="label">Rowing</div>
+                </div>
+                <div class="photo-card" onclick="openExploreDetail('images/skiing.jpg', 'Alps Adventure', 'Carving through the fresh powder in the Alps. There is a peculiar kind of freedom found at 3,000 meters—the world below looks small, and the only thing that matters is the wind against your face.')">
+                    <img src="images/skiing.jpg">
+                    <div class="label">Skiing</div>
+                </div>
+                <div class="photo-card" onclick="openExploreDetail('images/climbing.jpg', 'Reach Higher', 'Rock climbing is a conversation with gravity. Every grip and every step is a problem to be solved—not with a pen and paper, but with muscle and focus. It keeps me grounded.')">
+                    <img src="images/climbing.jpg">
+                    <div class="label">Climbing</div>
+                </div>
             </div>
         </div>
 
@@ -201,11 +195,11 @@
             <div class="feel-grid">
                 <div class="polaroid" onclick="openVideo('videos/guitar1.mp4')">
                     <div class="vid-thumb"><img src="images/guitar_thumb1.jpg"></div>
-                    <p>Midnight Guitar</p>
+                    <p>Midnight Strings</p>
                 </div>
                 <div class="polaroid" onclick="openVideo('videos/guitar2.mp4')">
                     <div class="vid-thumb"><img src="images/guitar_thumb2.jpg"></div>
-                    <p>Acoustic Vibes</p>
+                    <p>Sunset Chords</p>
                 </div>
             </div>
         </div>
@@ -213,52 +207,49 @@
         <div id="log" class="content-section">
             <div class="fan-container">
                 <div class="fan-leaf expanded" onclick="expandLeaf(this)">
-                    <div class="leaf-vertical-title">Poem: Cambridge Rain</div>
+                    <div class="leaf-vertical-title">Poem: Rain</div>
                     <div class="leaf-inner">
                         <div class="poem-title">Cambridge Rain</div>
-                        <div class="poem-content">
-                            The mist hangs low over the Cam,<br>
-                            Where willows weep in silent prayer.<br>
-                            A moment frozen, soft and calm,<br>
-                            In the cool, damp, academic air.
-                        </div>
+                        <div class="poem-content">The mist hangs low over the Cam,<br>Where willows weep in silent prayer.</div>
                     </div>
                 </div>
                 <div class="fan-leaf" onclick="expandLeaf(this)">
-                    <div class="leaf-vertical-title">Poem: String & Wind</div>
+                    <div class="leaf-vertical-title">Poem: Strings</div>
                     <div class="leaf-inner">
-                        <div class="poem-title">String & Wind</div>
-                        <div class="poem-content">
-                            Between the frets and the fingertips,<br>
-                            A story vibrates through the wood.<br>
-                            No words need cross the quiet lips,<br>
-                            The melody is understood.
-                        </div>
-                    </div>
-                </div>
-                <div class="fan-leaf" onclick="expandLeaf(this)">
-                    <div class="leaf-vertical-title">Poem: Midnight Coffee</div>
-                    <div class="leaf-inner">
-                        <div class="poem-title">Midnight Coffee</div>
-                        <div class="poem-content">
-                            Dark beans and a darker sky,<br>
-                            Tracing dreams before they fly.<br>
-                            The scent of hope in a ceramic cup,<br>
-                            Before the morning wakes us up.
-                        </div>
+                        <div class="poem-title">Strings</div>
+                        <div class="poem-content">Between the frets and the fingertips,<br>A story vibrates through the wood.</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="bottom-nav-menu">
-        <div class="menu-item active" onclick="showSection('explore', this)">explore the world</div>
-        <div class="menu-item" onclick="showSection('feel', this)">feel the world</div>
-        <div class="menu-item" onclick="showSection('log', this)">log the world</div>
+    <div id="explore-detail">
+        <div class="close-detail" onclick="closeExploreDetail()">&times;</div>
+        <div class="detail-overlay">
+            <h2 id="detail-title" class="detail-title"></h2>
+            <p id="detail-text" class="detail-text"></p>
+        </div>
     </div>
 
-    <div id="lightbox" onclick="this.style.display='none'"><img id="lightbox-img" src=""></div>
+    <div class="bottom-nav-menu">
+        <div class="menu-item active" onclick="showSection('explore', this)">
+            <svg class="polyline-deco" viewBox="0 0 60 12"><path d="M0,10 L10,2 L20,10 L30,2 L40,10 L50,2 L60,10" /></svg>
+            explore the world
+            <svg class="polyline-deco" viewBox="0 0 60 12"><path d="M0,10 L10,2 L20,10 L30,2 L40,10 L50,2 L60,10" /></svg>
+        </div>
+        <div class="menu-item" onclick="showSection('feel', this)">
+            <svg class="polyline-deco" viewBox="0 0 60 12"><path d="M0,10 L10,2 L20,10 L30,2 L40,10 L50,2 L60,10" /></svg>
+            feel the world
+            <svg class="polyline-deco" viewBox="0 0 60 12"><path d="M0,10 L10,2 L20,10 L30,2 L40,10 L50,2 L60,10" /></svg>
+        </div>
+        <div class="menu-item" onclick="showSection('log', this)">
+            <svg class="polyline-deco" viewBox="0 0 60 12"><path d="M0,10 L10,2 L20,10 L30,2 L40,10 L50,2 L60,10" /></svg>
+            log the world
+            <svg class="polyline-deco" viewBox="0 0 60 12"><path d="M0,10 L10,2 L20,10 L30,2 L40,10 L50,2 L60,10" /></svg>
+        </div>
+    </div>
+
     <div id="video-lightbox" onclick="closeVideo()">
         <video id="main-video" controls><source id="video-source" src="" type="video/mp4"></video>
     </div>
@@ -271,15 +262,22 @@
             btn.classList.add('active');
         }
 
-        // 折扇展开逻辑
+        // Explore 详情逻辑
+        function openExploreDetail(imgSrc, title, text) {
+            const detailView = document.getElementById('explore-detail');
+            detailView.style.backgroundImage = `url('${imgSrc}')`;
+            document.getElementById('detail-title').innerText = title;
+            document.getElementById('detail-text').innerText = text;
+            detailView.style.display = 'block';
+        }
+
+        function closeExploreDetail() {
+            document.getElementById('explore-detail').style.display = 'none';
+        }
+
         function expandLeaf(leaf) {
             document.querySelectorAll('.fan-leaf').forEach(l => l.classList.remove('expanded'));
             leaf.classList.add('expanded');
-        }
-
-        function openLightbox(src) {
-            document.getElementById('lightbox-img').src = src;
-            document.getElementById('lightbox').style.display = 'flex';
         }
 
         function openVideo(src) {
