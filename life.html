@@ -10,118 +10,168 @@
             --main-orange: #ff9a44;
             --gradient: linear-gradient(to right, #ff7e5f, #feb47b, #ff9a44);
             --bg-color: #fcfcfc;
+            --paper-color: #fffdf5;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Special Elite', serif; background-color: var(--bg-color); color: #333; overflow-x: hidden; min-height: 100vh; }
+        body { 
+            font-family: 'Special Elite', serif; 
+            background-color: var(--bg-color); 
+            color: #333; 
+            overflow: hidden; 
+            height: 100vh;
+        }
 
-        /* --- 1. 导航栏 --- */
+        /* --- 导航栏 --- */
         nav {
             background: #111; padding: 20px 0; display: flex;
             justify-content: space-around; position: fixed;
             top: 0; width: 100%; z-index: 1000;
         }
-        nav a { color: white; text-decoration: none; font-size: 1.3rem; transition: 0.3s; }
+        nav a { color: white; text-decoration: none; font-size: 1.2rem; transition: 0.3s; }
         nav a:hover { color: var(--main-orange); }
 
-        /* --- 2. 页面标题与菜单 --- */
-        .life-header { margin-top: 100px; text-align: center; padding: 30px 0; }
+        /* --- 页面标题 --- */
+        .life-header { margin-top: 100px; text-align: center; }
         .life-header h1 {
-            font-size: 3.5rem; background: var(--gradient);
+            font-size: 3rem; background: var(--gradient);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
         }
 
-        .main-menu { display: flex; justify-content: center; gap: 20px; margin-bottom: 40px; }
-        .menu-btn {
-            padding: 12px 25px; border: 1px solid #eee; cursor: pointer;
-            transition: 0.3s; background: white; font-size: 1.1rem; border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .menu-btn:hover, .menu-btn.active { 
-            background: var(--main-orange); color: white; border-color: var(--main-orange);
-            transform: translateY(-3px);
+        /* --- 内容区域容器 --- */
+        .content-wrapper {
+            height: calc(100vh - 400px); /* 给底部菜单留出充足空间 */
+            margin-top: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* 板块显隐逻辑 */
-        .content-section { display: none; padding: 0 10% 80px; animation: fadeIn 0.8s ease; }
+        .content-section { display: none; width: 100%; animation: fadeIn 1s ease; }
         .content-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- 3. Explore (横向画廊) --- */
+        /* --- 1. Explore (保持横向滚动) --- */
         .explore-grid {
-            display: flex; gap: 25px; overflow-x: auto; padding: 20px 0;
-            scrollbar-width: thin; scrollbar-color: var(--main-orange) #eee;
+            display: flex; gap: 20px; overflow-x: auto; padding: 0 10%;
+            scrollbar-width: none;
         }
+        .explore-grid::-webkit-scrollbar { display: none; }
         .photo-card {
-            min-width: 320px; height: 500px; border-radius: 15px;
-            overflow: hidden; cursor: pointer; position: relative;
-            transition: 0.4s; flex-shrink: 0; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            min-width: 280px; height: 400px; border-radius: 10px;
+            overflow: hidden; cursor: pointer; position: relative; flex-shrink: 0;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
         }
-        .photo-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
-        .photo-card:hover img { transform: scale(1.1); }
-        .photo-label {
-            position: absolute; bottom: 0; width: 100%; padding: 20px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.7));
-            color: white; font-size: 1.4rem;
-        }
+        .photo-card img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* --- 4. Feel (拍立得视频) --- */
-        .feel-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 50px; justify-items: center;
-        }
+        /* --- 2. Feel (保持拍立得) --- */
+        .feel-grid { display: flex; justify-content: center; gap: 30px; }
         .polaroid {
-            background: white; padding: 15px 15px 45px 15px;
+            background: white; padding: 15px 15px 40px 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05); transform: rotate(-2deg);
+            cursor: pointer; transition: 0.3s;
+        }
+        .polaroid:hover { transform: rotate(0) scale(1.05); }
+        .vid-thumb { width: 220px; height: 180px; background: #eee; }
+
+        /* --- 3. Log (折扇手风琴布局) --- */
+        .fan-container {
+            display: flex;
+            width: 90%;
+            height: 450px;
+            margin: 0 auto;
+            gap: 10px;
+        }
+        .fan-leaf {
+            flex: 1;
+            background: var(--paper-color);
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+            cursor: pointer;
+            position: relative;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.03);
+        }
+        /* 默认隐藏内容，只显示标题 */
+        .leaf-inner {
+            padding: 40px;
+            opacity: 0;
+            transition: opacity 0.5s;
+            white-space: nowrap;
+        }
+        .leaf-vertical-title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(90deg);
+            font-size: 1.5rem;
+            color: #999;
+            white-space: nowrap;
+            transition: 0.3s;
+        }
+        /* 展开状态 */
+        .fan-leaf.expanded {
+            flex: 6;
+            background: #fff;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: 0.4s; cursor: pointer; border: 1px solid #f0f0f0;
         }
-        .polaroid:nth-child(odd) { transform: rotate(-2deg); }
-        .polaroid:nth-child(even) { transform: rotate(2deg); }
-        .polaroid:hover { transform: rotate(0deg) scale(1.05); z-index: 10; }
-        
-        .vid-thumb { width: 260px; height: 200px; background: #333; position: relative; overflow: hidden; }
-        .vid-thumb img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
-        .vid-thumb::after {
-            content: '▶'; position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%); color: white; font-size: 2.5rem; text-shadow: 0 0 10px rgba(0,0,0,0.5);
+        .fan-leaf.expanded .leaf-inner {
+            opacity: 1;
+            white-space: normal;
         }
-        .polaroid p { text-align: center; margin-top: 15px; font-size: 1.1rem; color: #444; }
+        .fan-leaf.expanded .leaf-vertical-title {
+            opacity: 0;
+        }
 
-        /* --- 5. Log (3D 翻书) --- */
-        .book-container { display: flex; justify-content: center; padding: 40px 0; perspective: 1500px; }
-        .book { width: 800px; height: 550px; position: relative; transform-style: preserve-3d; }
-        .page {
-            position: absolute; width: 400px; height: 100%; top: 0; right: 0;
-            transform-origin: left; transform-style: preserve-3d;
-            transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-            z-index: 10; cursor: pointer;
-        }
-        .front, .back {
-            position: absolute; width: 100%; height: 100%; top: 0; left: 0;
-            background: #fffdf5; padding: 50px; box-shadow: inset 3px 0 10px rgba(0,0,0,0.05);
-            backface-visibility: hidden; border: 1px solid #eee; overflow: hidden;
-        }
-        .back { transform: rotateY(180deg); background: #fafaf2; }
-        .page.flipped { transform: rotateY(-180deg); }
+        .poem-title { font-size: 2rem; color: var(--main-orange); margin-bottom: 20px; }
+        .poem-content { font-size: 1.2rem; line-height: 2; color: #555; }
 
-        .poem-title { font-size: 1.8rem; margin-bottom: 30px; color: var(--main-orange); border-bottom: 1px solid #ddd; padding-bottom: 10px; }
-        .poem-content { line-height: 2; color: #444; font-size: 1.1rem; white-space: pre-wrap; }
+        /* --- 4. 底部艺术菜单 --- */
+        .bottom-nav-menu {
+            position: fixed;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            z-index: 100;
+        }
+        .menu-item {
+            font-size: 1.4rem;
+            color: #999;
+            cursor: pointer;
+            transition: 0.4s;
+            position: relative;
+            letter-spacing: 2px;
+        }
+        .menu-item::after {
+            content: '';
+            position: absolute;
+            bottom: -5px; left: 50%;
+            width: 0; height: 1px;
+            background: var(--main-orange);
+            transition: 0.3s;
+        }
+        .menu-item:hover, .menu-item.active {
+            color: #111;
+            transform: translateY(-2px);
+        }
+        .menu-item.active::after {
+            width: 100%;
+            left: 0;
+        }
 
-        /* --- 6. 全屏 Modal 系统 --- */
+        /* --- 全屏 Modal --- */
         #lightbox, #video-lightbox {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.92); z-index: 3000; display: none;
+            background: rgba(0,0,0,0.95); z-index: 3000; display: none;
             justify-content: center; align-items: center;
         }
-        #lightbox img { max-width: 90%; max-height: 90%; border: 3px solid white; border-radius: 5px; }
-        #video-lightbox video { max-width: 85%; max-height: 80%; border: 3px solid white; outline: none; }
-        .close-btn { position: absolute; top: 30px; right: 40px; color: white; font-size: 3rem; cursor: pointer; }
-
-        /* 响应式 */
-        @media (max-width: 850px) {
-            .book { width: 100%; height: 500px; }
-            .page { width: 100%; }
-        }
+        #lightbox img, #video-lightbox video { max-width: 90%; max-height: 85%; border: 2px solid white; }
     </style>
 </head>
 <body>
@@ -135,99 +185,66 @@
     </nav>
 
     <div class="life-header">
-        <h1>Life & Fragments</h1>
+        <h1>Life Fragments</h1>
     </div>
 
-    <div class="main-menu">
-        <div class="menu-btn active" onclick="showSection('explore', this)">Explore the World</div>
-        <div class="menu-btn" onclick="showSection('feel', this)">Feel the World</div>
-        <div class="menu-btn" onclick="showSection('log', this)">Log the World</div>
-    </div>
-
-    <div id="explore" class="content-section active">
-        <div class="explore-grid">
-            <div class="photo-card" onclick="openLightbox('images/rowing.jpg')">
-                <img src="images/rowing.jpg">
-                <div class="photo-label">Rowing @ Cambridge</div>
-            </div>
-            <div class="photo-card" onclick="openLightbox('images/skiing.jpg')">
-                <img src="images/skiing.jpg">
-                <div class="photo-label">Skiing in the Alps</div>
-            </div>
-            <div class="photo-card" onclick="openLightbox('images/climbing.jpg')">
-                <img src="images/climbing.jpg">
-                <div class="photo-label">Rock Climbing</div>
+    <div class="content-wrapper">
+        <div id="explore" class="content-section active">
+            <div class="explore-grid">
+                <div class="photo-card" onclick="openLightbox('images/rowing.jpg')"><img src="images/rowing.jpg"></div>
+                <div class="photo-card" onclick="openLightbox('images/skiing.jpg')"><img src="images/skiing.jpg"></div>
+                <div class="photo-card" onclick="openLightbox('images/climbing.jpg')"><img src="images/climbing.jpg"></div>
             </div>
         </div>
-    </div>
 
-    <div id="feel" class="content-section">
-        <div class="feel-grid">
-            <div class="polaroid" onclick="openVideo('videos/guitar1.mp4')">
-                <div class="vid-thumb"><img src="images/guitar_thumb1.jpg"></div>
-                <p>Morning Melodies</p>
-            </div>
-            <div class="polaroid" onclick="openVideo('videos/guitar2.mp4')">
-                <div class="vid-thumb"><img src="images/guitar_thumb2.jpg"></div>
-                <p>Midnight Improvisation</p>
-            </div>
-            <div class="polaroid" onclick="openVideo('videos/guitar3.mp4')">
-                <div class="vid-thumb"><img src="images/guitar_thumb3.jpg"></div>
-                <p>Acoustic Session</p>
+        <div id="feel" class="content-section">
+            <div class="feel-grid">
+                <div class="polaroid" onclick="openVideo('videos/guitar1.mp4')">
+                    <div class="vid-thumb"><img src="images/guitar_thumb1.jpg"></div>
+                    <p>Midnight Guitar</p>
+                </div>
+                <div class="polaroid" onclick="openVideo('videos/guitar2.mp4')">
+                    <div class="vid-thumb"><img src="images/guitar_thumb2.jpg"></div>
+                    <p>Acoustic Vibes</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="log" class="content-section">
-        <div class="book-container">
-            <div class="book">
-                <div class="page" onclick="this.classList.toggle('flipped')" style="z-index: 3;">
-                    <div class="front">
-                        <div class="poem-title">Fragments of Soul</div>
+        <div id="log" class="content-section">
+            <div class="fan-container">
+                <div class="fan-leaf expanded" onclick="expandLeaf(this)">
+                    <div class="leaf-vertical-title">Poem: Cambridge Rain</div>
+                    <div class="leaf-inner">
+                        <div class="poem-title">Cambridge Rain</div>
                         <div class="poem-content">
-                            This is a collection of my thoughts.<br>
-                            Click on the right side to flip the page.<br><br>
-                            文字是记忆的锚点，<br>
-                            记录下在剑桥的每一个瞬间。
-                        </div>
-                    </div>
-                    <div class="back">
-                        <div class="poem-title">Poem I: Cambridge Rain</div>
-                        <div class="poem-content">
-                            诗歌内容模版第一行<br>
-                            诗歌内容模版第二行<br>
-                            诗歌内容模版第三行<br>
-                            诗歌内容模版第四行...
+                            The mist hangs low over the Cam,<br>
+                            Where willows weep in silent prayer.<br>
+                            A moment frozen, soft and calm,<br>
+                            In the cool, damp, academic air.
                         </div>
                     </div>
                 </div>
-                <div class="page" onclick="this.classList.toggle('flipped')" style="z-index: 2;">
-                    <div class="front">
-                        <div class="poem-title">Poem II: Title Here</div>
+                <div class="fan-leaf" onclick="expandLeaf(this)">
+                    <div class="leaf-vertical-title">Poem: String & Wind</div>
+                    <div class="leaf-inner">
+                        <div class="poem-title">String & Wind</div>
                         <div class="poem-content">
-                            这里写第二首诗的开头...<br>
-                            春天的康河，<br>
-                            或者夏日的微风。
-                        </div>
-                    </div>
-                    <div class="back">
-                        <div class="poem-title">Poem III: Title Here</div>
-                        <div class="poem-content">
-                            这里写第三首诗的内容...
+                            Between the frets and the fingertips,<br>
+                            A story vibrates through the wood.<br>
+                            No words need cross the quiet lips,<br>
+                            The melody is understood.
                         </div>
                     </div>
                 </div>
-                <div class="page" onclick="this.classList.toggle('flipped')" style="z-index: 1;">
-                    <div class="front">
-                        <div class="poem-title">Ending</div>
+                <div class="fan-leaf" onclick="expandLeaf(this)">
+                    <div class="leaf-vertical-title">Poem: Midnight Coffee</div>
+                    <div class="leaf-inner">
+                        <div class="poem-title">Midnight Coffee</div>
                         <div class="poem-content">
-                            To be continued...
-                        </div>
-                    </div>
-                    <div class="back">
-                        <div class="poem-title">The Back Cover</div>
-                        <div class="poem-content">
-                            Xiaoqi Liu's Collection.
+                            Dark beans and a darker sky,<br>
+                            Tracing dreams before they fly.<br>
+                            The scent of hope in a ceramic cup,<br>
+                            Before the morning wakes us up.
                         </div>
                     </div>
                 </div>
@@ -235,48 +252,48 @@
         </div>
     </div>
 
-    <div id="lightbox" onclick="this.style.display='none'">
-        <img id="lightbox-img" src="">
+    <div class="bottom-nav-menu">
+        <div class="menu-item active" onclick="showSection('explore', this)">explore the world</div>
+        <div class="menu-item" onclick="showSection('feel', this)">feel the world</div>
+        <div class="menu-item" onclick="showSection('log', this)">log the world</div>
     </div>
 
-    <div id="video-lightbox">
-        <span class="close-btn" onclick="closeVideo()">&times;</span>
-        <video id="main-video" controls>
-            <source id="video-source" src="" type="video/mp4">
-        </video>
+    <div id="lightbox" onclick="this.style.display='none'"><img id="lightbox-img" src=""></div>
+    <div id="video-lightbox" onclick="closeVideo()">
+        <video id="main-video" controls><source id="video-source" src="" type="video/mp4"></video>
     </div>
 
     <script>
-        // 板块切换
         function showSection(id, btn) {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(b => b.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             btn.classList.add('active');
         }
 
-        // 图片 Lightbox
+        // 折扇展开逻辑
+        function expandLeaf(leaf) {
+            document.querySelectorAll('.fan-leaf').forEach(l => l.classList.remove('expanded'));
+            leaf.classList.add('expanded');
+        }
+
         function openLightbox(src) {
             document.getElementById('lightbox-img').src = src;
             document.getElementById('lightbox').style.display = 'flex';
         }
 
-        // 视频播放器
         function openVideo(src) {
-            const lightbox = document.getElementById('video-lightbox');
             const video = document.getElementById('main-video');
-            const source = document.getElementById('video-source');
-            source.src = src;
+            document.getElementById('video-source').src = src;
             video.load();
-            lightbox.style.display = 'flex';
+            document.getElementById('video-lightbox').style.display = 'flex';
             video.play();
         }
 
         function closeVideo() {
-            const lightbox = document.getElementById('video-lightbox');
             const video = document.getElementById('main-video');
             video.pause();
-            lightbox.style.display = 'none';
+            document.getElementById('video-lightbox').style.display = 'none';
         }
     </script>
 </body>
