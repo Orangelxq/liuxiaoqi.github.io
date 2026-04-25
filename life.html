@@ -98,7 +98,7 @@
             transform: rotate(90deg);
         }
 
-        /* --- 2. Feel (修正图片缩放逻辑) --- */
+        /* --- 2. Feel --- */
         .feel-grid { display: flex; justify-content: center; gap: 40px; }
         .polaroid {
             background: white; padding: 15px 15px 45px 15px;
@@ -111,15 +111,21 @@
             height: 200px; 
             background: #222; 
             position: relative;
-            overflow: hidden; /* 确保大图片超出的部分被隐藏 */
+            overflow: hidden;
         }
-        /* 核心修复：确保 1440x1440 的正方形图在 250x200 相框内不缩放变形 */
         .vid-thumb img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* 自动裁切并填充，保持比例 */
-            object-position: center; /* 居中裁切 */
+            object-fit: cover;
+            object-position: center;
             display: block;
+        }
+        /* 核心微调：将文字往下挪一点 (margin-top 15px -> 25px) */
+        .polaroid p { 
+            text-align: center; 
+            margin-top: 25px; 
+            font-size: 1.1rem; 
+            color: #444; 
         }
 
         /* --- 3. Log (折扇诗集 - 550px) --- */
