@@ -51,7 +51,7 @@
         .content-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- 1. Explore (沉浸式全屏背景) --- */
+        /* --- 1. Explore --- */
         .explore-grid {
             display: flex; gap: 30px; overflow-x: auto; padding: 0 10%;
             scrollbar-width: none;
@@ -87,9 +87,18 @@
         @keyframes slideLeft { from { transform: translateX(100%); } to { transform: translateX(0); } }
         .detail-title { font-size: 3rem; margin-bottom: 30px; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .detail-text { font-size: 1.2rem; line-height: 2; color: #444; }
-        .close-detail { position: absolute; top: 40px; left: 40px; font-size: 2.5rem; cursor: pointer; color: #333; z-index: 4100; }
+        
+        .close-detail { 
+            position: absolute; top: 40px; left: 40px; font-size: 2.5rem; 
+            cursor: pointer; color: #333; z-index: 4100; 
+            transition: all 0.3s ease;
+        }
+        .close-detail:hover { 
+            color: var(--main-orange);
+            transform: rotate(90deg);
+        }
 
-        /* --- 2. Feel (拍立得) --- */
+        /* --- 2. Feel (修正图片缩放逻辑) --- */
         .feel-grid { display: flex; justify-content: center; gap: 40px; }
         .polaroid {
             background: white; padding: 15px 15px 45px 15px;
@@ -97,16 +106,24 @@
             cursor: pointer; transition: 0.4s;
         }
         .polaroid:hover { transform: rotate(0) scale(1.05); }
-        .vid-thumb { width: 250px; height: 200px; background: #222; position: relative; }
-
-        /* --- 3. Log (折扇诗集 - 纵向拉长至 550px) --- */
-        .fan-container { 
-            display: flex; 
-            width: 85%; 
-            height: 550px; /* 修改：纵向拉长，占更多空间 */
-            margin: 0 auto; 
-            gap: 12px; 
+        .vid-thumb { 
+            width: 250px; 
+            height: 200px; 
+            background: #222; 
+            position: relative;
+            overflow: hidden; /* 确保大图片超出的部分被隐藏 */
         }
+        /* 核心修复：确保 1440x1440 的正方形图在 250x200 相框内不缩放变形 */
+        .vid-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 自动裁切并填充，保持比例 */
+            object-position: center; /* 居中裁切 */
+            display: block;
+        }
+
+        /* --- 3. Log (折扇诗集 - 550px) --- */
+        .fan-container { display: flex; width: 85%; height: 550px; margin: 0 auto; gap: 12px; }
         .fan-leaf {
             flex: 1; background: var(--paper-color); border: 1px solid #eee;
             border-radius: 10px; overflow: hidden; transition: all 0.7s cubic-bezier(0.25, 1, 0.5, 1);
@@ -123,40 +140,30 @@
         .poem-title { font-size: 2rem; color: var(--main-orange); margin-bottom: 20px; }
         .poem-content { font-size: 1.1rem; line-height: 1.8; color: #555; white-space: pre-wrap; }
 
-        /* --- 4. 底部错落菜单 (带两侧手绘波浪线) --- */
+        /* --- 4. 底部错落菜单 (手绘线) --- */
         .bottom-nav-menu {
             position: fixed; bottom: 40px; left: 10%; width: 80%;
             display: flex; flex-direction: column; z-index: 100;
         }
-
         .menu-item {
             display: flex; align-items: center; cursor: pointer;
             transition: 0.4s; padding: 10px 0;
             font-size: 1.4rem; color: #aaa; letter-spacing: 6px;
             text-transform: lowercase; width: 100%;
         }
-
-        /* 错落对齐：左、中、右 */
         .menu-item.stagger-left { justify-content: flex-start; }
         .menu-item.stagger-center { justify-content: center; }
         .menu-item.stagger-right { justify-content: flex-end; }
-
         .menu-item:hover, .menu-item.active { color: #111; }
 
-        /* 文字两边的手绘线条 */
         .wave-line {
-            width: 25%; /* 线条长度 */
-            height: 20px;
+            width: 25%; height: 20px;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 20' preserveAspectRatio='none'%3E%3Cpath d='M0,10 C150,20 350,0 500,10 C650,20 850,0 1000,10 C1150,20 1200,10 1200,10' stroke='%23ff9a44' fill='transparent' stroke-width='2'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-size: 100% 100%;
-            opacity: 0.2;
-            transition: 0.4s;
-            margin: 0 20px;
+            background-repeat: no-repeat; background-size: 100% 100%;
+            opacity: 0.2; transition: 0.4s; margin: 0 20px;
         }
         .menu-item:hover .wave-line, .menu-item.active .wave-line { opacity: 0.8; }
 
-        /* 视频 Modal */
         #video-lightbox {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.98); z-index: 5000; display: none;
@@ -182,13 +189,13 @@
     <div class="content-wrapper">
         <div id="explore" class="content-section active">
             <div class="explore-grid">
-                <div class="photo-card" onclick="openExploreDetail('images/rowing.jpg', 'Rowing on the Cam', 'The morning mist over the River Cam is where silence meets strength. In Cambridge, rowing is more than a sport; it is a rhythm of life.')">
+                <div class="photo-card" onclick="openExploreDetail('images/rowing.jpg', 'Rowing on the Cam', 'The morning mist over the River Cam is where silence meets strength.')">
                     <img src="images/rowing.jpg"><div class="label">Rowing</div>
                 </div>
-                <div class="photo-card" onclick="openExploreDetail('images/skiing.jpg', 'Alps Adventure', 'Carving through the fresh powder in the Alps. There is a peculiar kind of freedom found at 3,000 meters high.')">
+                <div class="photo-card" onclick="openExploreDetail('images/skiing.jpg', 'Alps Adventure', 'Carving through the fresh powder in the Alps.')">
                     <img src="images/skiing.jpg"><div class="label">Skiing</div>
                 </div>
-                <div class="photo-card" onclick="openExploreDetail('images/climbing.jpg', 'Reach Higher', 'Rock climbing is a conversation with gravity. It keeps me grounded and focused.')">
+                <div class="photo-card" onclick="openExploreDetail('images/climbing.jpg', 'Reach Higher', 'Rock climbing is a conversation with gravity.')">
                     <img src="images/climbing.jpg"><div class="label">Climbing</div>
                 </div>
             </div>
